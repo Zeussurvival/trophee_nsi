@@ -1,5 +1,5 @@
 # Example file showing a circle moving on screen
-import pygame
+import pygame # python3 -m pip install -U pygame --user²
 
 # pygame setup
 pygame.init()
@@ -39,5 +39,6 @@ while running:
     # dt is delta time in seconds since last frame, used for framerate-
     # independent physics.
     dt = clock.tick(60) / 1000
+    
 
 pygame.quit()
