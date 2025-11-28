@@ -1,8 +1,21 @@
 import numpy as np
 import pygame
 import sys
+import winreg
+def audio_device_available():
+    # Retourne True si Windows a AU MOINS un périphérique audio fonctionnel.
+    # On lit le registre Windows : s'il n'y a aucun endpoint audio actif,
+    # pygame.mixer ne doit PAS être initialisé.
+    try:
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,r"SOFTWARE\Microsoft\Windows\CurrentVersion\MMDevices\Audio\Render")
+        pygame.mixer.init()
+    except:
+        return False
+
 print(sys.executable)
-pygame.init()
+pygame.display.init()
+pygame.font.init()
+
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
@@ -42,8 +55,6 @@ print(map123)
 
 
 while running:
-    # poll for events
-    # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
