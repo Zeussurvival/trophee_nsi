@@ -2,7 +2,9 @@ import numpy as np
 import pygame
 import sys
 print(sys.executable)
-pygame.init()
+pygame.display.init()
+pygame.font.init()
+pygame.mixer.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
