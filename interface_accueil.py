@@ -2,20 +2,26 @@
 import pygame # python3 -m pip install -U pygame --user
 import os
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 assets_dir = os.path.join(main_dir,"assets")
 hologram_dir = os.path.join(assets_dir,"1. Free Hologram Interface Wenrexa")
 X3_dir = os.path.join(hologram_dir,"Card X3")
+button_1 = os.path.join(hologram_dir,"Button 1")
 
-background = pygame.image.load(os.path.join(X3_dir,"Card X6.png")).convert_alpha()
-background = pygame.transform.scale(background,(screen.get_size()))
+background_original = pygame.image.load(os.path.join(X3_dir,"Card X5.png")).convert_alpha()
+background = pygame.transform.scale(background_original,(screen.get_size()))
 # pygame setup
 
+button_size = (300, 100)
+button_image = pygame.image.load(os.path.join(button_1,"Button Normal.png"))
+button_hover = pygame.image.load(os.path.join(button_1,"Button Hover.png"))
 
-button_rect = pygame.Rect(300, 250, 200, 80)
+button_rect = button_image.get_rect()
+button_rect.center = (400, 300)
+
 font = pygame.font.Font(None, 36)
 
 
@@ -37,11 +43,26 @@ while running:
                 print("Bouton cliqué !")
     # fill the screen with a color to wipe away anything from last frame
     # screen.fill("purple")
+    mouse_pos = pygame.mouse.get_pos()
+    mouse_over_button = button_rect.collidepoint(mouse_pos)
+
     screen.blit(background,(0,0))
 
-    pygame.draw.rect(screen, BLUE, button_rect)
+
+
+    # pygame.draw.rect(screen, BLUE, button_rect)
+
+
+    screen.blit(button_image, button_rect)
+
+    if mouse_over_button:
+        screen.blit(button_hover, button_rect)
+    else :
+        screen.blit(button_image, button_rect)
+    
     text = font.render("Jouer", True, WHITE)
-    screen.blit(text, (button_rect.x + 50, button_rect.y + 25))
+    text_rect = text.get_rect(center=button_rect.center)
+    screen.blit(text, text_rect)
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
