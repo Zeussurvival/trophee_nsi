@@ -22,9 +22,6 @@ button_hover = pygame.image.load(os.path.join(button_1,"Button Hover.png"))
 button_click = pygame.image.load(os.path.join(button_1,"Button Active.png"))
 icon_play = pygame.image.load(os.path.join(icons, "play.png"))
 
-button_rect = button_image.get_rect()
-button_rect.center = (400, 450)
-
 
 
 
@@ -61,9 +58,10 @@ class Button():
         self.hover_image = pygame.transform.scale(button_hover, (width, height))
         self.pressed_image = pygame.transform.scale(button_click, (width, height))
 
-
-        self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.buttonSurf = font.render(buttonText, True, (20, 20, 20))
+        self.buttonRect = pygame.Rect(0, 0, self.width, self.height)
+        self.buttonRect.center = (x, y)
+        
+        self.buttonSurf = font.render(buttonText, True, WHITE)
         objects.append(self)
 
     def process(self):
@@ -85,11 +83,9 @@ class Button():
         else:
             screen.blit(self.normal_image, self.buttonRect)
             self.alreadyPressed = False 
-        # self.buttonSurface.blit(self.buttonSurf, [
-        #     self.buttonRect.width/2 - self.buttonSurf.get_rect().width/2,
-        #     self.buttonRect.height/2 - self.buttonSurf.get_rect().height/2
-        # ])
-        # screen.blit(self.buttonSurface, self.buttonRect)
+
+        text_rect = self.buttonSurf.get_rect(center=self.buttonRect.center)
+        screen.blit(self.buttonSurf, text_rect)
 
 
 
@@ -129,37 +125,14 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if button_rect.collidepoint(event.pos):
-                print("Bouton cliqué !")
-                mouse_clicked_button = True
-        else : 
-            mouse_clicked_button = False
+
     # fill the screen with a color to wipe away anything from last frame
     # screen.fill("purple")
     mouse_pos = pygame.mouse.get_pos()
-    mouse_over_button = button_rect.collidepoint(mouse_pos)
+
 
 
     screen.blit(background,(0,0))
-
-
-
-    # pygame.draw.rect(screen, BLUE, button_rect)
-
-
-    screen.blit(button_image, button_rect)
-
-    if mouse_over_button:
-        screen.blit(button_hover, button_rect)
-        if mouse_clicked_button:
-            screen.blit(button_click, button_rect)
-    else :
-        screen.blit(button_image, button_rect)
-    
-    text = font.render("Jouer", True, WHITE)
-    text_rect = text.get_rect(center=button_rect.center)
-    screen.blit(text, text_rect)
 
 
     screen.blit(main_text, main_text_rect)
