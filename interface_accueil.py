@@ -43,6 +43,85 @@ main_text_rect.center = (400, 150)
 running = True
 dt = 0
 mouse_clicked_button = False
+objects = []
+
+
+class Button():
+    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.onclickFunction = onclickFunction
+        self.onePress = onePress
+        self.alreadyPressed = False
+
+
+        self.normal_image = pygame.transform.scale(button_image, (width, height))
+        self.hover_image = pygame.transform.scale(button_hover, (width, height))
+        self.pressed_image = pygame.transform.scale(button_click, (width, height))
+
+
+        self.buttonRect = pygame.Rect(self.x, self.y, self.width, self.height)
+        self.buttonSurf = font.render(buttonText, True, (20, 20, 20))
+        objects.append(self)
+
+    def process(self):
+        mousePos = pygame.mouse.get_pos()
+
+        if self.buttonRect.collidepoint(mousePos):
+            screen.blit(self.pressed_image, self.buttonRect)
+            if pygame.mouse.get_pressed(num_buttons=3)[0]:
+                screen.blit(self.pressed_image, self.buttonRect)
+                if self.onePress:
+                    self.onclickFunction()
+                elif not self.alreadyPressed:
+                    self.onclickFunction()
+                    self.alreadyPressed = True
+            else:
+                screen.blit(self.hover_image, self.buttonRect)
+                self.alreadyPressed = False
+
+        else:
+            screen.blit(self.normal_image, self.buttonRect)
+            self.alreadyPressed = False 
+        # self.buttonSurface.blit(self.buttonSurf, [
+        #     self.buttonRect.width/2 - self.buttonSurf.get_rect().width/2,
+        #     self.buttonRect.height/2 - self.buttonSurf.get_rect().height/2
+        # ])
+        # screen.blit(self.buttonSurface, self.buttonRect)
+
+
+
+
+
+def myFunction():
+    print('Button Pressed')
+
+
+Button(400, 450, 100, 50, 'Jouer', myFunction)
+# Button(30, 140, 400, 100, 'Button Two (multiPress)', myFunction, True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -86,7 +165,8 @@ while running:
     screen.blit(main_text, main_text_rect)
 
     icon_play = icon_play
-    icon_play_rect = icon_play.get_rect(center=button_rect.center)
+    icon_play_rect = icon_play.get_rect() 
+    icon_play_rect.center = (450, 450)
     screen.blit(icon_play, icon_play_rect)
 
     keys = pygame.key.get_pressed()
@@ -94,6 +174,9 @@ while running:
         pass
     # flip() the display to put your work on screen
 
+
+    for object in objects:
+        object.process()
     pygame.display.flip()
 
     # limits FPS to 60
