@@ -45,24 +45,59 @@ def create_random_pos(seed,numbers_to_gen,map_length):
 def pollution_creation_rond(Liste_pos,range_pollu,map): # pas forcement realiste au top mais bon
     new_map = np.zeros(map.shape)
     for pos in Liste_pos:
-        new_map[pos[1],pos[0]] = 1
-    
-    for x in range(map.shape[0]):
-        for y in range(map.shape[1]):
-            pos = x,y
+        matrice_for_pos = circle_gradient_matrix(range_pollu)
+
+        haut,long = new_map.shape
+        ha_p,lo_p = range_pollu*2+1,range_pollu*2+1
+        for y in range(ha_p):
+            for x in range(lo_p):
+                y_actu = pos[1] + y
+                x_actu = pos[1] + x
+
+                if 0 <= x_actu < long and 0 <= y_actu < haut:
+                    new_map[y_actu,x_actu] += matrice_for_pos[y_actu,x_actu]
 
 # print(create_random_pos(seed,4,(x_map,y_map)))
+# print(map123[-2::5,...])
+
+
+def circle_gradient_matrix(radius): # fait par gpt parce que flm de refaire les ronds en pixel chef
+    diameter = radius * 2
+    mat = np.zeros((diameter+1, diameter+1), dtype=np.float32)
+    circle_x, circle_y = radius, radius  # centre
+
+    for y in range(diameter + 1):
+        for x in range(diameter + 1):
+            distance_x = x - circle_x
+            dy = y - circle_y
+            distance = (distance_x**2 + dy**2)**0.5  # distance euclidienne
+            if distance <= radius:
+                mat[y, x] = 1 - distance/radius
+            else:
+                mat[y, x] = 0
+    return mat
+
+# Exemple pour radius=3
+mat = circle_gradient_matrix(3)
 
 def set_pollution_map_rectangle(number_of_origins,seed,map,range_pollu):
     Liste_pos = create_random_pos(seed,number_of_origins,map.shape)
     new_map = pollution_creation_rond(Liste_pos,range_pollu,map)
-    print(new_map)
-    print(Liste_pos)
-    return Liste_pos
+    # print(new_map)
+    # print(Liste_pos)
+    return new_map
 
-set_pollution_map_rectangle(4,seed,map123,5)
+for row in mat:
+    print(row)
 
-# print(map123[-2::5,...])
+map_pollu = set_pollution_map_rectangle(4,seed,map123,5)
+
+
+
+
+
+
+
 
 
 house_matrice = np.array([[3,4,5,6],
