@@ -2,20 +2,29 @@
 import pygame # python3 -m pip install -U pygame --user
 import os
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
 
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 assets_dir = os.path.join(main_dir,"assets")
 hologram_dir = os.path.join(assets_dir,"1. Free Hologram Interface Wenrexa")
 X3_dir = os.path.join(hologram_dir,"Card X3")
+button_1 = os.path.join(hologram_dir,"Button 1")
+icons = os.path.join(hologram_dir,"Icons")
 
-background = pygame.image.load(os.path.join(X3_dir,"Card X6.png")).convert_alpha()
-background = pygame.transform.scale(background,(screen.get_size()))
+background_original = pygame.image.load(os.path.join(X3_dir,"Card X5.png")).convert_alpha()
+background = pygame.transform.scale(background_original,(screen.get_size()))
 # pygame setup
 
+button_size = (300, 100)
+button_image = pygame.image.load(os.path.join(button_1,"Button Normal.png"))
+button_hover = pygame.image.load(os.path.join(button_1,"Button Hover.png"))
+button_click = pygame.image.load(os.path.join(button_1,"Button Active.png"))
+icon_play = pygame.image.load(os.path.join(icons, "play.png"))
 
-button_rect = pygame.Rect(300, 250, 200, 80)
+
+
+
 font = pygame.font.Font(None, 36)
 
 
@@ -23,8 +32,92 @@ WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 DARK_BLUE = (0, 0, 200)
 
+
+main_text = font.render("NABHJBJ", True, WHITE)
+main_text_rect = main_text.get_rect()
+main_text_rect.center = (400, 150)
+
 running = True
 dt = 0
+mouse_clicked_button = False
+objects = []
+
+
+class Button():
+    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.onclickFunction = onclickFunction
+        self.onePress = onePress
+        self.alreadyPressed = False
+
+
+        self.normal_image = pygame.transform.scale(button_image, (width, height))
+        self.hover_image = pygame.transform.scale(button_hover, (width, height))
+        self.pressed_image = pygame.transform.scale(button_click, (width, height))
+
+        self.buttonRect = pygame.Rect(0, 0, self.width, self.height)
+        self.buttonRect.center = (x, y)
+        
+        self.buttonSurf = font.render(buttonText, True, WHITE)
+        objects.append(self)
+
+    def process(self):
+        mousePos = pygame.mouse.get_pos()
+
+        if self.buttonRect.collidepoint(mousePos):
+            screen.blit(self.pressed_image, self.buttonRect)
+            if pygame.mouse.get_pressed(num_buttons=3)[0]:
+                screen.blit(self.pressed_image, self.buttonRect)
+                if self.onePress:
+                    self.onclickFunction()
+                elif not self.alreadyPressed:
+                    self.onclickFunction()
+                    self.alreadyPressed = True
+            else:
+                screen.blit(self.hover_image, self.buttonRect)
+                self.alreadyPressed = False
+
+        else:
+            screen.blit(self.normal_image, self.buttonRect)
+            self.alreadyPressed = False 
+
+        text_rect = self.buttonSurf.get_rect(center=self.buttonRect.center)
+        screen.blit(self.buttonSurf, text_rect)
+
+
+
+
+
+def myFunction():
+    print('Button Pressed')
+
+
+Button(400, 450, 100, 50, 'Jouer', myFunction)
+# Button(30, 140, 400, 100, 'Button Two (multiPress)', myFunction, True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -32,22 +125,31 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if button_rect.collidepoint(event.pos):
-                print("Bouton cliqué !")
+
     # fill the screen with a color to wipe away anything from last frame
     # screen.fill("purple")
+    mouse_pos = pygame.mouse.get_pos()
+
+
+
     screen.blit(background,(0,0))
 
-    pygame.draw.rect(screen, BLUE, button_rect)
-    text = font.render("Jouer", True, WHITE)
-    screen.blit(text, (button_rect.x + 50, button_rect.y + 25))
+
+    screen.blit(main_text, main_text_rect)
+
+    icon_play = icon_play
+    icon_play_rect = icon_play.get_rect() 
+    icon_play_rect.center = (450, 450)
+    screen.blit(icon_play, icon_play_rect)
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
         pass
     # flip() the display to put your work on screen
 
+
+    for object in objects:
+        object.process()
     pygame.display.flip()
 
     # limits FPS to 60
