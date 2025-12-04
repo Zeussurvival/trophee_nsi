@@ -28,7 +28,7 @@ seed = 25
 
 
 def creation_map_rectangle(width,height):
-    Map = np.zeros((width,height), dtype=np.uint32)
+    Map = np.zeros((width,height), dtype=np.float32)
     return Map
 
 map123 = creation_map_rectangle(x_map,y_map)
@@ -42,43 +42,40 @@ def create_random_pos(seed,numbers_to_gen,map_length):
         Liste_n.append((num // map_length[0],num % map_length[0]))
     return Liste_n
 
+
+
+
+
 def pollution_creation_rond(Liste_pos,range_pollu,map): # pas forcement realiste au top mais bon
     new_map = np.zeros(map.shape)
     for pos in Liste_pos:
-        matrice_for_pos = circle_gradient_matrix(range_pollu)
+        map_pollu = create_round_matrice(range_pollu)
+        # place_matrice_big_then_small(matrice,house_matrice,positions):
+        new_map = place_matrice_big_then_small(new_map,map_pollu,pos)
+        pass
+    return new_map
 
-        haut,long = new_map.shape
-        ha_p,lo_p = range_pollu*2+1,range_pollu*2+1
-        for y in range(ha_p):
-            for x in range(lo_p):
-                y_actu = pos[1] + y
-                x_actu = pos[1] + x
+ 
+def create_round_matrice(radius):
+    matrice = np.zeros((radius*2+1,radius*2+1))
+    matrice[radius,radius] = 1
+    matrice[radius,radius+2] = 1
+    print(matrice.shape[1])
+    for x in range(matrice.shape[1]):
+        distance_x = radius - x
+        # print(distance_x)
+        # print(matrice[x])
+        for y in range(matrice.shape[0]):
+            distance_y = radius - y
+            num = min(max(0,1 - (distance_x**2+distance_y**2-1)/(radius**2)),1) #le - 1 permet davoir des contours avec quand meme une certaine valeur
+            matrice[x,y]= num # et le min du dessus permet davoir le centre la valeur 1 assez forte
+            # print(matrice[x,y])
+    return matrice
 
-                if 0 <= x_actu < long and 0 <= y_actu < haut:
-                    new_map[y_actu,x_actu] += matrice_for_pos[y_actu,x_actu]
+# mat = create_round_matrice(5)
+# for row in mat:
+#     print(row)
 
-# print(create_random_pos(seed,4,(x_map,y_map)))
-# print(map123[-2::5,...])
-
-
-def circle_gradient_matrix(radius): # fait par gpt parce que flm de refaire les ronds en pixel chef
-    diameter = radius * 2
-    mat = np.zeros((diameter+1, diameter+1), dtype=np.float32)
-    circle_x, circle_y = radius, radius  # centre
-
-    for y in range(diameter + 1):
-        for x in range(diameter + 1):
-            distance_x = x - circle_x
-            dy = y - circle_y
-            distance = (distance_x**2 + dy**2)**0.5  # distance euclidienne
-            if distance <= radius:
-                mat[y, x] = 1 - distance/radius
-            else:
-                mat[y, x] = 0
-    return mat
-
-# Exemple pour radius=3
-mat = circle_gradient_matrix(3)
 
 def set_pollution_map_rectangle(number_of_origins,seed,map,range_pollu):
     Liste_pos = create_random_pos(seed,number_of_origins,map.shape)
@@ -87,10 +84,12 @@ def set_pollution_map_rectangle(number_of_origins,seed,map,range_pollu):
     # print(Liste_pos)
     return new_map
 
-for row in mat:
-    print(row)
+# print(create_random_pos(seed,4,(x_map,y_map)))
+# print(map123[-2::5,...])
 
-map_pollu = set_pollution_map_rectangle(4,seed,map123,5)
+
+
+
 
 
 
@@ -103,14 +102,18 @@ map_pollu = set_pollution_map_rectangle(4,seed,map123,5)
 house_matrice = np.array([[3,4,5,6],
                          [7,8,9,18],
                          [17,16,15,14],])
-def place_house(matrice,house_matrice,positions):
-    for x in range(house_matrice.shape[0]):
-        for y in range(house_matrice.shape[1]):
-            matrice[positions[0]+x,positions[1]+y] = house_matrice[x,y]
+print(house_matrice)
+def place_matrice_big_then_small(matrice,house_matrice,positions):
+    for true_y in range(house_matrice.shape[0]):
+        for true_x in range(house_matrice.shape[1]):
+            print(positions[1]+true_x,matrice.shape[0])
+            if 0 < positions[1]+true_x < matrice.shape[0] and 0 < positions[0]+true_y < matrice.shape[1]:
+                matrice[positions[1]+true_x,positions[0]+true_y] = house_matrice[true_x,true_y]
+    
     return matrice
-map123 = place_house(map123,house_matrice,(2,2))
+map123 = place_matrice_big_then_small(map123,house_matrice,(18,18))
 
-
+print(map123)
 # x = np.arange(36).reshape(6, 6)
 # print(x[4::-2,...])
 
