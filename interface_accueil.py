@@ -112,7 +112,7 @@ def myFunction():
 
 
 Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
-# Button(30, 140, 400, 100, 'Button Two (multiPress)', myFunction, True)
+Button(100, 600, 50, 50, '', myFunction, icon=icon_play )
 
 
 perso_image_scaled = pygame.transform.scale(perso_image, (128, 256))        
