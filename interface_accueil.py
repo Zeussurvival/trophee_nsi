@@ -11,6 +11,7 @@ hologram_dir = os.path.join(assets_dir,"1. Free Hologram Interface Wenrexa")
 X3_dir = os.path.join(hologram_dir,"Card X3")
 button_1 = os.path.join(hologram_dir,"Button 1")
 icons = os.path.join(hologram_dir,"Icons")
+robot = os.path.join(assets_dir,"Robot")
 
 background_original = pygame.image.load(os.path.join(X3_dir,"Card X5.png")).convert_alpha()
 background = pygame.transform.scale(background_original,(screen.get_size()))
@@ -21,7 +22,7 @@ button_image = pygame.image.load(os.path.join(button_1,"Button Normal.png"))
 button_hover = pygame.image.load(os.path.join(button_1,"Button Hover.png"))
 button_click = pygame.image.load(os.path.join(button_1,"Button Active.png"))
 icon_play = pygame.image.load(os.path.join(icons, "play.png"))
-
+perso_image = pygame.image.load(os.path.join(robot, "v1.png"))
 
 
 
@@ -117,28 +118,23 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        
 
     # fill the screen with a color to wipe away anything from last frame
     # screen.fill("purple")
     mouse_pos = pygame.mouse.get_pos()
 
 
-
     screen.blit(background,(0,0))
-
-
     screen.blit(main_text, main_text_rect)
-
-    # icon_play = icon_play
-    # icon_play_rect = icon_play.get_rect() 
-    # icon_play_rect.center = (450, 450)
-    # screen.blit(icon_play, icon_play_rect)
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
         pass
-    # flip() the display to put your work on screen
+
+    perso_image_scaled = pygame.transform.scale(perso_image, (128, 256))        
+    perso_image_rect = perso_image_scaled.get_rect ()
+    perso_image_rect.midleft = (50, 300)
+    screen.blit(perso_image_scaled, perso_image_rect)
 
 
     for object in objects:
