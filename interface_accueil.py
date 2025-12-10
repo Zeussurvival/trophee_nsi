@@ -1,6 +1,8 @@
 # Example file showing a circle moving on screen
 import pygame # python3 -m pip install -U pygame --user
 import os
+import random
+
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 clock = pygame.time.Clock()
@@ -112,6 +114,16 @@ def myFunction():
 Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
 # Button(30, 140, 400, 100, 'Button Two (multiPress)', myFunction, True)
 
+
+perso_image_scaled = pygame.transform.scale(perso_image, (128, 256))        
+perso_image_rect = perso_image_scaled.get_rect ()
+perso_image_rect.center = (400, 300)
+
+perso_speed_x = random.choice([-200, -150, 150, 200]) 
+perso_speed_y = random.choice([-200, -150, 150, 200])
+
+
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -125,17 +137,26 @@ while running:
 
 
     screen.blit(background,(0,0))
-    screen.blit(main_text, main_text_rect)
+
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
         pass
 
-    perso_image_scaled = pygame.transform.scale(perso_image, (128, 256))        
-    perso_image_rect = perso_image_scaled.get_rect ()
-    perso_image_rect.midleft = (50, 300)
-    screen.blit(perso_image_scaled, perso_image_rect)
+    
 
+    perso_image_rect.x += perso_speed_x * dt
+    perso_image_rect.y += perso_speed_y * dt
+
+
+    if perso_image_rect.left <= 0 or perso_image_rect.right >= 800:
+        perso_speed_x = -perso_speed_x
+
+    if perso_image_rect.top <= 0 or perso_image_rect.bottom >= 600:
+        perso_speed_y = -perso_speed_y
+
+    screen.blit(perso_image_scaled, perso_image_rect)
+    screen.blit(main_text, main_text_rect)
 
     for object in objects:
         object.process()
