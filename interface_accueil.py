@@ -44,7 +44,7 @@ objects = []
 
 
 class Button():
-    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False):
+    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False, icon=None):
         self.x = x
         self.y = y
         self.width = width
@@ -52,7 +52,8 @@ class Button():
         self.onclickFunction = onclickFunction
         self.onePress = onePress
         self.alreadyPressed = False
-
+        self.icon = icon
+    
 
         self.normal_image = pygame.transform.scale(button_image, (width, height))
         self.hover_image = pygame.transform.scale(button_hover, (width, height))
@@ -84,10 +85,22 @@ class Button():
             screen.blit(self.normal_image, self.buttonRect)
             self.alreadyPressed = False 
 
-        text_rect = self.buttonSurf.get_rect(center=self.buttonRect.center)
-        screen.blit(self.buttonSurf, text_rect)
+        if self.icon :
+            icon_rect = self.icon.get_rect()
+            total_width = self.buttonSurf.get_width() + 15 + icon_rect.width       
+        
+            text_rect = self.buttonSurf.get_rect()
+            text_rect.center = (self.buttonRect.centerx - total_width // 2 + self.buttonSurf.get_width() // 2, self.buttonRect.centery)
+            
+            icon_rect.midleft = (text_rect.right + 15, self.buttonRect.centery)
 
 
+            screen.blit(self.buttonSurf, text_rect)
+            screen.blit(self.icon, icon_rect)
+
+        else:
+            text_rect = self.buttonSurf.get_rect(center=self.buttonRect.center)
+            screen.blit(self.buttonSurf, text_rect) 
 
 
 
@@ -95,28 +108,8 @@ def myFunction():
     print('Button Pressed')
 
 
-Button(400, 450, 100, 50, 'Jouer', myFunction)
+Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
 # Button(30, 140, 400, 100, 'Button Two (multiPress)', myFunction, True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 while running:
     # poll for events
@@ -137,10 +130,10 @@ while running:
 
     screen.blit(main_text, main_text_rect)
 
-    icon_play = icon_play
-    icon_play_rect = icon_play.get_rect() 
-    icon_play_rect.center = (450, 450)
-    screen.blit(icon_play, icon_play_rect)
+    # icon_play = icon_play
+    # icon_play_rect = icon_play.get_rect() 
+    # icon_play_rect.center = (450, 450)
+    # screen.blit(icon_play, icon_play_rect)
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_SPACE]:
