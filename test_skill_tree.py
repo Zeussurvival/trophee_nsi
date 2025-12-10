@@ -120,23 +120,6 @@ SKILLS = {
     }
 }
 
-class Particle:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.vx = (pygame.math.Vector2(1, 0).rotate(pygame.time.get_ticks() % 360)).x * 0.5
-        self.vy = (pygame.math.Vector2(1, 0).rotate(pygame.time.get_ticks() % 360)).y * 0.5
-        self.life = 255
-        
-    def update(self):
-        self.x += self.vx
-        self.y += self.vy
-        self.life -= 3
-        
-    def draw(self, screen):
-        if self.life > 0:
-            color = (*CYAN_400, max(0, self.life))
-            pygame.draw.circle(screen, color, (int(self.x), int(self.y)), 2)
 
 class SkillNode:
     def __init__(self, skill_data):
@@ -202,20 +185,21 @@ class SkillNode:
                                  glow_rect.width // 2)
                 screen.blit(glow_surface, glow_rect.topleft)
         
-        # Hexagone du nœud
-        hex_points = []
-        for i in range(6):
-            angle = math.pi / 3 * i - math.pi / 6
-            x = self.rect.centerx + math.cos(angle) * 60
-            y = self.rect.centery + math.sin(angle) * 60
-            hex_points.append((x, y))
         
-        # Remplissage avec transparence
-        hex_surface = pygame.Surface((140, 140), pygame.SRCALPHA)
-        hex_offset_points = [(p[0] - self.rect.centerx + 70, p[1] - self.rect.centery + 70) for p in hex_points]
-        pygame.draw.polygon(hex_surface, (*SLATE_900, 220), hex_offset_points)
-        pygame.draw.polygon(hex_surface, color, hex_offset_points, 3)
-        screen.blit(hex_surface, (self.rect.centerx - 70, self.rect.centery - 70))
+        # Choisir l'image hexagone selon le statut
+        if is_unlocked:
+            hex_img = pygame.image.load('assets/SkillTree/hexa_bought.png')
+        elif is_available and skill_points >= self.data['cost']:
+            hex_img = pygame.image.load('assets/SkillTree/hexa_canbuy.png')
+        elif is_available:
+            hex_img = pygame.image.load('assets/SkillTree/hexa_unlocked.png')
+        else:
+            hex_img = pygame.image.load('assets/SkillTree/hexa_locked.png')
+        
+        # Redimensionner et centrer l'hexagone
+        hex_img = pygame.transform.scale(hex_img, (140, 151.5))
+        hex_rect = hex_img.get_rect(center=self.rect.center)
+        screen.blit(hex_img, hex_rect)
         
         # Icône tier
         tier_text = small_font.render(f"T{self.data['tier']}", True, color)
@@ -241,15 +225,7 @@ class SkillNode:
             unlocked_text = small_font.render("✓", True, CYAN_400)
             unlocked_rect = unlocked_text.get_rect(center=(self.rect.centerx, self.rect.centery + 35))
             screen.blit(unlocked_text, unlocked_rect)
-        
-        # Particules
-        if is_unlocked:
-            self.particles = [p for p in self.particles if p.life > 0]
-            if pygame.time.get_ticks() % 10 == 0:
-                self.particles.append(Particle(self.rect.centerx, self.rect.centery))
-            for particle in self.particles:
-                particle.update()
-                particle.draw(screen)
+
         
         # Tooltip au survol
         if self.hover:
