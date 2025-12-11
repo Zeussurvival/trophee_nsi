@@ -24,9 +24,12 @@ Actual_map = D.creation_map_rectangle(25,25)
 Actual_map[0,2] = 1
 print(Actual_map)
 
-List_tiles = [C.Tile("background.png",None,0)]
+List_tiles = [C.Tile("background_1.png",None,0),C.Tile("background_1.png",None,90),C.Tile("background_1.png",None,180),C.Tile("background_1.png",None,270),\
+              C.Tile("background_2.png",None,0),C.Tile("background_2.png",None,90),C.Tile("background_2.png",None,180),C.Tile("background_2.png",None,270)]
 
-
+for y in range(Actual_map.shape[0]):
+    for x in range(Actual_map.shape[1]):
+        Actual_map[x,y] = random.randint(0,7)
 
 
 running = True
@@ -38,8 +41,7 @@ while running:
 
     for y in range(Actual_map.shape[0]):
         for x in range(Actual_map.shape[1]):
-            print(Actual_map[x,y])
-            List_tiles[Actual_map[x,y]-1].blit_self(screen,(x*16,y*16))
+            List_tiles[Actual_map[x,y]].blit_self(screen,(x*16,y*16))
 
     pygame.display.flip()
     dt = clock.tick(60) / 1000
