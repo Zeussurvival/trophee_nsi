@@ -24,6 +24,7 @@ button_image = pygame.image.load(os.path.join(button_1,"Button Normal.png"))
 button_hover = pygame.image.load(os.path.join(button_1,"Button Hover.png"))
 button_click = pygame.image.load(os.path.join(button_1,"Button Active.png"))
 icon_play = pygame.image.load(os.path.join(icons, "play.png"))
+icon_settings = pygame.image.load(os.path.join(icons,"settings.png"))
 perso_image = pygame.image.load(os.path.join(robot, "v1.png"))
 
 
@@ -36,7 +37,7 @@ BLUE = (0, 0, 255)
 DARK_BLUE = (0, 0, 200)
 
 
-main_text = font.render("NABHJBJ", True, WHITE)
+main_text = font.render("Re:Life", True, WHITE)
 main_text_rect = main_text.get_rect()
 main_text_rect.center = (400, 150)
 
@@ -112,7 +113,7 @@ def myFunction():
 
 
 Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
-Button(100, 600, 50, 50, '', myFunction, icon=icon_play )
+Button(70, 70, 50, 50, '', myFunction, icon=icon_settings )
 
 
 perso_image_scaled = pygame.transform.scale(perso_image, (128, 256))        
