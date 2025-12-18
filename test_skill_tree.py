@@ -206,7 +206,7 @@ class SkillNode:
             cost_rect = cost_text.get_rect(center=(self.rect.centerx, self.rect.centery + 35))
             screen.blit(cost_text, cost_rect)
         else:
-            unlocked_text = small_font.render("✓", True, CYAN_400)
+            unlocked_text = small_font.render("Bought", True, CYAN_400)
             unlocked_rect = unlocked_text.get_rect(center=(self.rect.centerx, self.rect.centery + 35))
             screen.blit(unlocked_text, unlocked_rect)
 
@@ -218,12 +218,9 @@ class SkillNode:
     def draw_tooltip(self, screen, font):
         tooltip_width = 250
         tooltip_height = 80
-        tooltip_x = self.rect.centerx - tooltip_width // 2
-        tooltip_y = self.rect.bottom + 10
+        tooltip_x = 150
+        tooltip_y = 150
         
-        # Ajuster si sort de l'écran
-        if tooltip_y + tooltip_height > HEIGHT:
-            tooltip_y = self.rect.top - tooltip_height - 10
         
         # Fond du tooltip
         tooltip_surface = pygame.Surface((tooltip_width, tooltip_height), pygame.SRCALPHA)
@@ -305,11 +302,11 @@ class Game:
                         (WIDTH // 2 - 300, 55), (WIDTH // 2 + 300, 55), 1)
         
         # Statistiques
-        points_text = self.font.render(f"⚡ UPGRADE POINTS: {self.skill_points}", True, CYAN_300)
+        points_text = self.font.render(f"UPGRADE POINTS: {self.skill_points}", True, CYAN_300)
         points_rect = points_text.get_rect(center=(WIDTH // 2 - 150, 80))
         self.screen.blit(points_text, points_rect)
         
-        modules_text = self.font.render(f"🔧 ACTIVE MODULES: {len(self.unlocked_skills)}", True, BLUE_400)
+        modules_text = self.font.render(f"ACTIVE MODULES: {len(self.unlocked_skills)}", True, BLUE_400)
         modules_rect = modules_text.get_rect(center=(WIDTH // 2 + 150, 80))
         self.screen.blit(modules_text, modules_rect)
         
