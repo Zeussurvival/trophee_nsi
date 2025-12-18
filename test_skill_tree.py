@@ -27,7 +27,7 @@ SKILLS = {
         'name': 'CORE SYSTEM',
         'description': 'Base neural processing',
         'cost': 0,
-        'pos': (700, 150),
+        'pos': (700, 210),
         'tier': 1,
         'dependencies': []
     },
@@ -38,7 +38,7 @@ SKILLS = {
         'name': 'VISION MODULE',
         'description': 'Enhanced optical sensors',
         'cost': 2,
-        'pos': (400, 300),
+        'pos': (400, 360),
         'tier': 2,
         'dependencies': ['core']
     },
@@ -47,7 +47,7 @@ SKILLS = {
         'name': 'CPU BOOST',
         'description': 'Faster processing speed',
         'cost': 2,
-        'pos': (700, 300),
+        'pos': (700, 360),
         'tier': 2,
         'dependencies': ['core']
     },
@@ -56,7 +56,7 @@ SKILLS = {
         'name': 'MOBILITY',
         'description': 'Improved movement',
         'cost': 2,
-        'pos': (1000, 300),
+        'pos': (1000, 360),
         'tier': 2,
         'dependencies': ['core']
     },
@@ -67,7 +67,7 @@ SKILLS = {
         'name': 'AI VISION',
         'description': 'Object recognition',
         'cost': 3,
-        'pos': (300, 450),
+        'pos': (300, 510),
         'tier': 3,
         'dependencies': ['vision']
     },
@@ -76,7 +76,7 @@ SKILLS = {
         'name': 'NIGHT VISION',
         'description': 'See in darkness',
         'cost': 3,
-        'pos': (500, 450),
+        'pos': (500, 510),
         'tier': 3,
         'dependencies': ['vision']
     },
@@ -85,7 +85,7 @@ SKILLS = {
         'name': 'OVERCLOCK',
         'description': 'Maximum performance',
         'cost': 4,
-        'pos': (700, 450),
+        'pos': (700, 510),
         'tier': 3,
         'dependencies': ['processing']
     },
@@ -94,7 +94,7 @@ SKILLS = {
         'name': 'TURBO MODE',
         'description': 'Speed boost',
         'cost': 3,
-        'pos': (900, 450),
+        'pos': (900, 510),
         'tier': 3,
         'dependencies': ['mobility']
     },
@@ -103,7 +103,7 @@ SKILLS = {
         'name': 'FLIGHT',
         'description': 'Aerial capabilities',
         'cost': 4,
-        'pos': (1100, 450),
+        'pos': (1100, 510),
         'tier': 3,
         'dependencies': ['mobility']
     },
@@ -114,7 +114,7 @@ SKILLS = {
         'name': 'QUANTUM CORE',
         'description': 'Ultimate upgrade',
         'cost': 5,
-        'pos': (700, 600),
+        'pos': (700, 660),
         'tier': 4,
         'dependencies': ['overclock', 'ai_vision', 'turbo']
     }
@@ -144,23 +144,7 @@ class SkillNode:
         is_unlocked = self.is_unlocked(unlocked_skills)
         is_available = self.is_available(unlocked_skills)
         
-        # Dessiner les connexions
-        for dep_id in self.data['dependencies']:
-            dep_skill = SKILLS[dep_id]
-            dep_pos = dep_skill['pos']
             
-            if is_unlocked:
-                color = CYAN_400
-                width = 3
-            elif dep_id in unlocked_skills:
-                color = BLUE_400
-                width = 2
-            else:
-                color = (50, 50, 70)
-                width = 1
-                
-            pygame.draw.line(screen, color, dep_pos, self.data['pos'], width)
-        
         # Couleur du nœud
         if is_unlocked:
             color = CYAN_400
@@ -341,18 +325,44 @@ class Game:
         reset_text = self.small_font.render("// RESET MATRIX", True, CYAN_400)
         reset_text_rect = reset_text.get_rect(center=reset_rect.center)
         self.screen.blit(reset_text, reset_text_rect)
+
+    # Dessiner les connexions
+    def draw_connections(self):
+        for node in self.skill_nodes:
+            for dep_id in node.data['dependencies']:
+                dep_skill = SKILLS[dep_id]
+                start_pos = dep_skill['pos']
+                end_pos = node.data['pos']
+            
+                if node.is_unlocked(self.unlocked_skills):
+                    color = CYAN_400
+                    width = 3
+                elif dep_id in self.unlocked_skills:
+                    color = BLUE_400
+                    width = 2
+                else:
+                    color = (50, 50, 70)
+                    width = 1
+                
+                pygame.draw.line(self.screen, color, start_pos, end_pos, width)
     
     def run(self):
         while self.running:
             self.handle_events()
             
-            # Dessin
+            
             self.draw_background()
+
+            self.draw_connections()
             
             # Dessiner les nœuds de compétences
             for node in self.skill_nodes:
-                node.draw(self.screen, self.unlocked_skills, self.skill_points, 
-                         self.font, self.small_font)
+                node.draw(self.screen,
+                self.unlocked_skills,
+                self.skill_points,
+                self.font,
+                self.small_font
+                )
             
             self.draw_ui()
             
