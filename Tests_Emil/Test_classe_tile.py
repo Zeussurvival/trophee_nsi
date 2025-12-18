@@ -22,7 +22,7 @@ class Tile:
         if image != None:
             self.image = pygame.image.load(os.path.join(img_dir, image)).convert_alpha()
             self.image = pygame.transform.rotate(self.image,rotate)
-            self.image = pygame.transform.scale(self.image,(16,16))
+            self.image = pygame.transform.scale(self.image,(64,64))
         else:
             self.image = None #a supr qd plus de tile
         if rotate != None: #a supr qd plus de tile
@@ -39,3 +39,4 @@ class Tile:
     def blit_self(self,screen,pos):
         if self.image != None:
             screen.blit(self.image,pos)
+
