@@ -15,6 +15,7 @@ button_1 = os.path.join(hologram_dir,"Button 1")
 icons = os.path.join(hologram_dir,"Icons")
 robot = os.path.join(assets_dir,"Robot")
 
+# background_original = pygame.image.load(os.path.join(X3_dir,"Card X5.png")).convert_alpha()
 background_original = pygame.image.load(os.path.join(X3_dir,"Card X5.png")).convert_alpha()
 background = pygame.transform.scale(background_original,(screen.get_size()))
 # pygame setup
@@ -34,10 +35,11 @@ icon_quit = pygame.image.load(os.path.join(icons, "quit.png"))
 icon_sound = pygame.image.load(os.path.join(icons, "sound.png"))
 icon_up = pygame.image.load(os.path.join(icons, "up.png"))
 perso_image = pygame.image.load(os.path.join(robot, "robot_v1.png"))
-
+title_image = pygame.image.load(os.path.join(assets_dir, "title.png"))
 
 
 font = pygame.font.Font(None, 36)
+# font_title 
 
 
 WHITE = (255, 255, 255)
@@ -45,9 +47,12 @@ BLUE = (0, 0, 255)
 DARK_BLUE = (0, 0, 200)
 
 
-main_text = font.render("Re:Life", True, WHITE)
-main_text_rect = main_text.get_rect()
-main_text_rect.center = (400, 150)
+# main_text = font.render("Re:Life", True, WHITE)
+# main_text_rect = main_text.get_rect()
+#main_text_rect.center = (400, 150)
+title_image_resize = pygame.transform.scale(title_image,(256, int(92.75)))
+title_image_rect = title_image_resize.get_rect()
+title_image_rect.center = (400, 150)
 
 running = True
 dt = 0
@@ -179,7 +184,7 @@ while running:
 
     screen.blit(perso_image_scaled, perso_image_rect)
     # screen.blit(perso_image, perso_image_rect)
-    screen.blit(main_text, main_text_rect)
+    screen.blit(title_image_resize, title_image_rect)
 
     for object in objects:
         object.process()
