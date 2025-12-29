@@ -25,7 +25,7 @@ button_hover = pygame.image.load(os.path.join(button_1,"Button Hover.png"))
 button_click = pygame.image.load(os.path.join(button_1,"Button Active.png"))
 icon_play = pygame.image.load(os.path.join(icons, "play.png"))
 icon_settings = pygame.image.load(os.path.join(icons,"settings.png"))
-perso_image = pygame.image.load(os.path.join(robot, "v1.png"))
+perso_image = pygame.image.load(os.path.join(robot, "robot_v1.png"))
 
 
 
@@ -48,7 +48,7 @@ objects = []
 
 
 class Button():
-    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False, icon=None):
+    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False, icon=None, icon_only=False):
         self.x = x
         self.y = y
         self.width = width
@@ -57,11 +57,12 @@ class Button():
         self.onePress = onePress
         self.alreadyPressed = False
         self.icon = icon
+        self.icon_only = icon_only
     
-
-        self.normal_image = pygame.transform.scale(button_image, (width, height))
-        self.hover_image = pygame.transform.scale(button_hover, (width, height))
-        self.pressed_image = pygame.transform.scale(button_click, (width, height))
+        if not icon_only:
+            self.normal_image = pygame.transform.scale(button_image, (width, height))
+            self.hover_image = pygame.transform.scale(button_hover, (width, height))
+            self.pressed_image = pygame.transform.scale(button_click, (width, height))
 
         self.buttonRect = pygame.Rect(0, 0, self.width, self.height)
         self.buttonRect.center = (x, y)
@@ -73,34 +74,42 @@ class Button():
         mousePos = pygame.mouse.get_pos()
 
         if self.buttonRect.collidepoint(mousePos):
-            screen.blit(self.pressed_image, self.buttonRect)
-            if pygame.mouse.get_pressed(num_buttons=3)[0]:
+            if not self.icon_only :
                 screen.blit(self.pressed_image, self.buttonRect)
+            if pygame.mouse.get_pressed(num_buttons=3)[0]:
+                if not self.icon_only :
+                    screen.blit(self.pressed_image, self.buttonRect)
                 if self.onePress:
                     self.onclickFunction()
                 elif not self.alreadyPressed:
                     self.onclickFunction()
                     self.alreadyPressed = True
             else:
-                screen.blit(self.hover_image, self.buttonRect)
+                if not self.icon_only :
+                    screen.blit(self.hover_image, self.buttonRect)
                 self.alreadyPressed = False
 
         else:
-            screen.blit(self.normal_image, self.buttonRect)
+            if not self.icon_only:
+                screen.blit(self.normal_image, self.buttonRect)
             self.alreadyPressed = False 
 
         if self.icon :
-            icon_rect = self.icon.get_rect()
-            total_width = self.buttonSurf.get_width() + 15 + icon_rect.width       
-        
-            text_rect = self.buttonSurf.get_rect()
-            text_rect.center = (self.buttonRect.centerx - total_width // 2 + self.buttonSurf.get_width() // 2, self.buttonRect.centery)
+            if self.icon_only:
+                icon_rect = self.icon.get_rect(center=self.buttonRect.center)
+                screen.blit(self.icon, icon_rect)
+            else :    
+                icon_rect = self.icon.get_rect()
+                total_width = self.buttonSurf.get_width() + 15 + icon_rect.width       
             
-            icon_rect.midleft = (text_rect.right + 15, self.buttonRect.centery)
+                text_rect = self.buttonSurf.get_rect()
+                text_rect.center = (self.buttonRect.centerx - total_width // 2 + self.buttonSurf.get_width() // 2, self.buttonRect.centery)
+                
+                icon_rect.midleft = (text_rect.right + 15, self.buttonRect.centery)
 
 
-            screen.blit(self.buttonSurf, text_rect)
-            screen.blit(self.icon, icon_rect)
+                screen.blit(self.buttonSurf, text_rect)
+                screen.blit(self.icon, icon_rect)
 
         else:
             text_rect = self.buttonSurf.get_rect(center=self.buttonRect.center)
@@ -113,11 +122,12 @@ def myFunction():
 
 
 Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
-Button(70, 70, 50, 50, '', myFunction, icon=icon_settings )
+Button(70, 70, 50, 50, '', myFunction, icon=icon_settings, icon_only=True )
 
 
-perso_image_scaled = pygame.transform.scale(perso_image, (128, 256))        
+perso_image_scaled = pygame.transform.scale(perso_image, (128, 188))        
 perso_image_rect = perso_image_scaled.get_rect ()
+# perso_image_rect = perso_image.get_rect ()
 perso_image_rect.center = (400, 300)
 
 perso_speed_x = random.choice([-200, -150, 150, 200]) 
@@ -157,6 +167,7 @@ while running:
         perso_speed_y = -perso_speed_y
 
     screen.blit(perso_image_scaled, perso_image_rect)
+    # screen.blit(perso_image, perso_image_rect)
     screen.blit(main_text, main_text_rect)
 
     for object in objects:
