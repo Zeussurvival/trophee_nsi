@@ -11,13 +11,39 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 assets_dir = os.path.join(main_dir,"assets")
 hologram_dir = os.path.join(assets_dir,"1. Free Hologram Interface Wenrexa")
 X3_dir = os.path.join(hologram_dir,"Card X3")
+X2_dir = os.path.join(hologram_dir, "Card X2")
 button_1 = os.path.join(hologram_dir,"Button 1")
 icons = os.path.join(hologram_dir,"Icons")
 robot = os.path.join(assets_dir,"Robot")
 
 # background_original = pygame.image.load(os.path.join(X3_dir,"Card X5.png")).convert_alpha()
+# background_original = pygame.image.load(os.path.join(X3_dir,"Card X5.png")).convert_alpha()
+# background = pygame.transform.scale(background_original,(screen.get_size()))
+
+
 background_original = pygame.image.load(os.path.join(X3_dir,"Card X5.png")).convert_alpha()
-background = pygame.transform.scale(background_original,(screen.get_size()))
+
+
+screen_width, screen_height = screen.get_size()
+img_width, img_height = background_original.get_size()
+
+
+scale_x = screen_width / img_width
+scale_y = screen_height / img_height
+scale = max(scale_x, scale_y)  
+
+new_width = int(img_width * scale)
+new_height = int(img_height * scale)
+
+background_scaled = pygame.transform.scale(background_original, (new_width, new_height))
+
+
+background = pygame.Surface((screen_width, screen_height))
+x_offset = (new_width - screen_width) // 2
+y_offset = (new_height - screen_height) // 2
+
+background.blit(background_scaled, (-x_offset, -y_offset))
+
 # pygame setup
 
 button_size = (300, 100)
@@ -34,9 +60,13 @@ icon_music = pygame.image.load(os.path.join(icons, "music.png"))
 icon_quit = pygame.image.load(os.path.join(icons, "quit.png"))
 icon_sound = pygame.image.load(os.path.join(icons, "sound.png"))
 icon_up = pygame.image.load(os.path.join(icons, "up.png"))
+icon_close = pygame.image.load(os.path.join(icons, "close.png"))
 perso_image = pygame.image.load(os.path.join(robot, "robot_v1.png"))
 title_image = pygame.image.load(os.path.join(assets_dir, "title.png"))
 
+settings_panel = pygame.image.load(os.path.join(X2_dir,"Card X2.png"))
+settings_panel_rect = settings_panel.get_rect()
+settings_panel_rect.center = (400, 300)
 
 font = pygame.font.Font(None, 36)
 # font_title 
@@ -45,7 +75,7 @@ font = pygame.font.Font(None, 36)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
 DARK_BLUE = (0, 0, 200)
-
+SEMI_TRANSPARENT = (0,0,0,180)
 
 
 title_image_resize = pygame.transform.scale(title_image,(256, int(92.75)))
@@ -56,7 +86,7 @@ running = True
 dt = 0
 mouse_clicked_button = False
 objects = []
-
+show_settings = False
 
 class Button():
     def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False, icon=None, icon_only=False):
@@ -126,18 +156,96 @@ class Button():
             text_rect = self.buttonSurf.get_rect(center=self.buttonRect.center)
             screen.blit(self.buttonSurf, text_rect) 
 
+class Settings_Button():
+    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False, icon=None, icon_only=False):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.onclickFunction = onclickFunction
+        self.onePress = onePress
+        self.alreadyPressed = False
+        self.icon = icon
+        self.icon_only = icon_only
+    
+        if not icon_only:
+            self.normal_image = pygame.transform.scale(button_image, (width, height))
+            self.hover_image = pygame.transform.scale(button_hover, (width, height))
+            self.pressed_image = pygame.transform.scale(button_click, (width, height))
 
+        self.buttonRect = pygame.Rect(0, 0, self.width, self.height)
+        self.buttonRect.center = (x, y)
+        
+        self.buttonSurf = font.render(buttonText, True, WHITE)
+    def process(self):
+        mousePos = pygame.mouse.get_pos()
+
+        if self.buttonRect.collidepoint(mousePos):
+            if not self.icon_only :
+                screen.blit(self.pressed_image, self.buttonRect)
+            if pygame.mouse.get_pressed(num_buttons=3)[0]:
+                if not self.icon_only :
+                    screen.blit(self.pressed_image, self.buttonRect)
+                if self.onePress:
+                    self.onclickFunction()
+                elif not self.alreadyPressed:
+                    self.onclickFunction()
+                    self.alreadyPressed = True
+            else:
+                if not self.icon_only :
+                    screen.blit(self.hover_image, self.buttonRect)
+                self.alreadyPressed = False
+
+        else:
+            if not self.icon_only:
+                screen.blit(self.normal_image, self.buttonRect)
+            self.alreadyPressed = False 
+
+        if self.icon :
+            if self.icon_only:
+                icon_rect = self.icon.get_rect(center=self.buttonRect.center)
+                screen.blit(self.icon, icon_rect)
+            else :    
+                icon_rect = self.icon.get_rect()
+                total_width = self.buttonSurf.get_width() + 15 + icon_rect.width       
+            
+                text_rect = self.buttonSurf.get_rect()
+                text_rect.center = (self.buttonRect.centerx - total_width // 2 + self.buttonSurf.get_width() // 2, self.buttonRect.centery)
+                
+                icon_rect.midleft = (text_rect.right + 15, self.buttonRect.centery)
+
+
+                screen.blit(self.buttonSurf, text_rect)
+                screen.blit(self.icon, icon_rect)
+
+        else:
+            text_rect = self.buttonSurf.get_rect(center=self.buttonRect.center)
+            screen.blit(self.buttonSurf, text_rect) 
+
+
+def go_settings():
+    global show_settings
+    show_settings = not show_settings
+    print("settings ouverts/fermés")
+
+def change_volume():
+    print("changement volume")
 
 def myFunction():
     print('Button Pressed')
 
 
 Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
-Button(70, 70, 50, 50, '', myFunction, icon=icon_settings, icon_only=True )
+Button(70, 70, 50, 50, '', go_settings, icon=icon_settings, icon_only=True )
 Button(730, 70, 50, 50, "", myFunction, icon=icon_info, icon_only=True)
 Button(730, 120, 50, 50, "", myFunction, icon=icon_discord, icon_only=True)
 Button(730, 170, 50, 50, "", myFunction, icon=icon_dons, icon_only=True)
 Button(120, 70, 50, 50, "", myFunction, icon=icon_quit, icon_only=True)
+
+settings_buttons = [
+    Settings_Button(400, 300, 200, 60, '', change_volume, icon=icon_sound, icon_only=True),
+    Settings_Button(400, 380, 200, 60, '', go_settings, icon=icon_close, icon_only=True)    
+]
 
 perso_image_scaled = pygame.transform.scale(perso_image, (128, 188))        
 perso_image_rect = perso_image_scaled.get_rect ()
@@ -155,7 +263,9 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE and show_settings:
+                show_settings = False
     # fill the screen with a color to wipe away anything from last frame
     # screen.fill("purple")
     mouse_pos = pygame.mouse.get_pos()
@@ -186,6 +296,27 @@ while running:
 
     for object in objects:
         object.process()
+
+
+    if show_settings:
+        # Créer un overlay semi-transparent
+        overlay = pygame.Surface((800, 600), pygame.SRCALPHA)
+        overlay.fill(SEMI_TRANSPARENT)
+        screen.blit(overlay, (0, 0))
+        
+        # Dessiner le panneau de réglages
+        # settings_panel = pygame.Rect(200, 150, 400, 300)
+        # pygame.draw.rect(screen, (20, 20, 40), settings_panel)
+        # pygame.draw.rect(screen, WHITE, settings_panel, 3)  # Bordure
+        screen.blit(settings_panel, settings_panel_rect)
+        settings_title = font.render("Réglages", True, WHITE)
+        settings_title_rect = settings_title.get_rect(center=(400, 200))
+        screen.blit(settings_title, settings_title_rect)
+        
+
+        for btn in settings_buttons:
+            btn.process()
+    
     pygame.display.flip()
 
     # limits FPS to 60
