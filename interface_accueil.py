@@ -47,9 +47,7 @@ BLUE = (0, 0, 255)
 DARK_BLUE = (0, 0, 200)
 
 
-# main_text = font.render("Re:Life", True, WHITE)
-# main_text_rect = main_text.get_rect()
-#main_text_rect.center = (400, 150)
+
 title_image_resize = pygame.transform.scale(title_image,(256, int(92.75)))
 title_image_rect = title_image_resize.get_rect()
 title_image_rect.center = (400, 150)
