@@ -25,6 +25,14 @@ button_hover = pygame.image.load(os.path.join(button_1,"Button Hover.png"))
 button_click = pygame.image.load(os.path.join(button_1,"Button Active.png"))
 icon_play = pygame.image.load(os.path.join(icons, "play.png"))
 icon_settings = pygame.image.load(os.path.join(icons,"settings.png"))
+icon_dons = pygame.image.load(os.path.join(icons, "dons.png"))
+icon_discord = pygame.image.load(os.path.join(icons, "discord.png"))
+icon_info = pygame.image.load(os.path.join(icons, "info.png"))
+icon_down = pygame.image.load(os.path.join(icons, "down.png"))
+icon_music = pygame.image.load(os.path.join(icons, "music.png"))
+icon_quit = pygame.image.load(os.path.join(icons, "quit.png"))
+icon_sound = pygame.image.load(os.path.join(icons, "sound.png"))
+icon_up = pygame.image.load(os.path.join(icons, "up.png"))
 perso_image = pygame.image.load(os.path.join(robot, "robot_v1.png"))
 
 
@@ -123,7 +131,10 @@ def myFunction():
 
 Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
 Button(70, 70, 50, 50, '', myFunction, icon=icon_settings, icon_only=True )
-
+Button(730, 70, 50, 50, "", myFunction, icon=icon_info, icon_only=True)
+Button(730, 120, 50, 50, "", myFunction, icon=icon_discord, icon_only=True)
+Button(730, 170, 50, 50, "", myFunction, icon=icon_dons, icon_only=True)
+Button(120, 70, 50, 50, "", myFunction, icon=icon_quit, icon_only=True)
 
 perso_image_scaled = pygame.transform.scale(perso_image, (128, 188))        
 perso_image_rect = perso_image_scaled.get_rect ()
