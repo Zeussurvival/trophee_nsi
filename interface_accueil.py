@@ -61,12 +61,17 @@ icon_quit = pygame.image.load(os.path.join(icons, "quit.png"))
 icon_sound = pygame.image.load(os.path.join(icons, "sound.png"))
 icon_up = pygame.image.load(os.path.join(icons, "up.png"))
 icon_close = pygame.image.load(os.path.join(icons, "close.png"))
+icon_mute = pygame.image.load(os.path.join(icons, "mute.png"))
 perso_image = pygame.image.load(os.path.join(robot, "robot_v1.png"))
 title_image = pygame.image.load(os.path.join(assets_dir, "title.png"))
 
 settings_panel = pygame.image.load(os.path.join(X2_dir,"Card X2.png"))
 settings_panel_rect = settings_panel.get_rect()
 settings_panel_rect.center = (400, 300)
+
+music_panel = pygame.image.load(os.path.join(X2_dir,"Card X2.png"))
+music_panel_rect = music_panel.get_rect()
+music_panel_rect.center = (400,300)
 
 font = pygame.font.Font(None, 36)
 # font_title 
@@ -87,6 +92,7 @@ dt = 0
 mouse_clicked_button = False
 objects = []
 show_settings = False
+show_music = False
 
 class Button():
     def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False, icon=None, icon_only=False):
@@ -222,6 +228,71 @@ class Settings_Button():
             text_rect = self.buttonSurf.get_rect(center=self.buttonRect.center)
             screen.blit(self.buttonSurf, text_rect) 
 
+class Music_Button():
+    def __init__(self, x, y, width, height, buttonText='Button', onclickFunction=None, onePress=False, icon=None, icon_only=False):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.onclickFunction = onclickFunction
+        self.onePress = onePress
+        self.alreadyPressed = False
+        self.icon = icon
+        self.icon_only = icon_only
+    
+        if not icon_only:
+            self.normal_image = pygame.transform.scale(button_image, (width, height))
+            self.hover_image = pygame.transform.scale(button_hover, (width, height))
+            self.pressed_image = pygame.transform.scale(button_click, (width, height))
+
+        self.buttonRect = pygame.Rect(0, 0, self.width, self.height)
+        self.buttonRect.center = (x, y)
+        
+        self.buttonSurf = font.render(buttonText, True, WHITE)
+    def process(self):
+        mousePos = pygame.mouse.get_pos()
+
+        if self.buttonRect.collidepoint(mousePos):
+            if not self.icon_only :
+                screen.blit(self.pressed_image, self.buttonRect)
+            if pygame.mouse.get_pressed(num_buttons=3)[0]:
+                if not self.icon_only :
+                    screen.blit(self.pressed_image, self.buttonRect)
+                if self.onePress:
+                    self.onclickFunction()
+                elif not self.alreadyPressed:
+                    self.onclickFunction()
+                    self.alreadyPressed = True
+            else:
+                if not self.icon_only :
+                    screen.blit(self.hover_image, self.buttonRect)
+                self.alreadyPressed = False
+
+        else:
+            if not self.icon_only:
+                screen.blit(self.normal_image, self.buttonRect)
+            self.alreadyPressed = False 
+
+        if self.icon :
+            if self.icon_only:
+                icon_rect = self.icon.get_rect(center=self.buttonRect.center)
+                screen.blit(self.icon, icon_rect)
+            else :    
+                icon_rect = self.icon.get_rect()
+                total_width = self.buttonSurf.get_width() + 15 + icon_rect.width       
+            
+                text_rect = self.buttonSurf.get_rect()
+                text_rect.center = (self.buttonRect.centerx - total_width // 2 + self.buttonSurf.get_width() // 2, self.buttonRect.centery)
+                
+                icon_rect.midleft = (text_rect.right + 15, self.buttonRect.centery)
+
+
+                screen.blit(self.buttonSurf, text_rect)
+                screen.blit(self.icon, icon_rect)
+
+        else:
+            text_rect = self.buttonSurf.get_rect(center=self.buttonRect.center)
+            screen.blit(self.buttonSurf, text_rect) 
 
 def go_settings():
     global show_settings
@@ -234,6 +305,25 @@ def change_volume():
 def myFunction():
     print('Button Pressed')
 
+def close_music():
+    global show_music
+    show_music = False
+    pygame.event.clear()
+    print ("music fermé")
+
+def open_music():
+    global show_music
+    show_music = True
+    print("music ouvert")
+
+def mute():
+    print ("muted")
+
+def up():
+    print("music up")
+
+def down():
+    print("music_down")
 
 Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
 Button(70, 70, 50, 50, '', go_settings, icon=icon_settings, icon_only=True )
@@ -243,8 +333,15 @@ Button(730, 170, 50, 50, "", myFunction, icon=icon_dons, icon_only=True)
 Button(120, 70, 50, 50, "", myFunction, icon=icon_quit, icon_only=True)
 
 settings_buttons = [
-    Settings_Button(400, 300, 200, 60, '', change_volume, icon=icon_sound, icon_only=True),
-    Settings_Button(400, 380, 200, 60, '', go_settings, icon=icon_close, icon_only=True)    
+    Settings_Button(400, 300, 50, 50, '', open_music, icon=icon_sound, icon_only=True),
+    Settings_Button(250, 160, 50, 50, '', go_settings, icon=icon_close, icon_only=True)    
+]
+
+music_buttons = [
+    Music_Button(300, 335, 50, 50, '', mute, icon=icon_mute, icon_only=True),
+    Music_Button(400, 335, 50, 50, '', up, icon=icon_up, icon_only=True),
+    Music_Button(500, 335, 50, 50, '', down, icon=icon_down, icon_only=True),
+    Music_Button(250, 160, 50, 50, '', close_music, icon=icon_close, icon_only=True)
 ]
 
 perso_image_scaled = pygame.transform.scale(perso_image, (128, 188))        
@@ -264,8 +361,11 @@ while running:
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE and show_settings:
-                show_settings = False
+            if event.key == pygame.K_ESCAPE :
+                if show_music:
+                    show_music = False
+                elif show_settings:
+                    show_settings = False
     # fill the screen with a color to wipe away anything from last frame
     # screen.fill("purple")
     mouse_pos = pygame.mouse.get_pos()
@@ -313,8 +413,19 @@ while running:
         settings_title_rect = settings_title.get_rect(center=(400, 200))
         screen.blit(settings_title, settings_title_rect)
         
+        if not show_music :
+            for btn in settings_buttons:
+                btn.process()
+    
+    if show_music:
 
-        for btn in settings_buttons:
+        screen.blit(music_panel, music_panel_rect)
+        music_title = font.render("Sons", True, WHITE)
+        music_title_rect = music_title.get_rect(center=(400, 200))
+        screen.blit(music_title, music_title_rect)
+        
+
+        for btn in music_buttons:
             btn.process()
     
     pygame.display.flip()
