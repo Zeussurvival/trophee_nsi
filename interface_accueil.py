@@ -11,7 +11,7 @@ main_dir = os.path.split(os.path.abspath(__file__))[0]
 assets_dir = os.path.join(main_dir,"assets")
 hologram_dir = os.path.join(assets_dir,"1. Free Hologram Interface Wenrexa")
 X3_dir = os.path.join(hologram_dir,"Card X3")
-X2_dir = os.path.join(hologram_dir, "Card X2")
+X2_dir = os.path.join(hologram_dir, "Card X2") 
 button_1 = os.path.join(hologram_dir,"Button 1")
 icons = os.path.join(hologram_dir,"Icons")
 robot = os.path.join(assets_dir,"Robot")
@@ -308,7 +308,8 @@ def myFunction():
 def close_music():
     global show_music
     show_music = False
-    pygame.event.clear()
+    for btn in settings_buttons:
+        btn.alreadyPressed = True
     print ("music fermé")
 
 def open_music():
@@ -339,8 +340,8 @@ settings_buttons = [
 
 music_buttons = [
     Music_Button(300, 335, 50, 50, '', mute, icon=icon_mute, icon_only=True),
-    Music_Button(400, 335, 50, 50, '', up, icon=icon_up, icon_only=True),
-    Music_Button(500, 335, 50, 50, '', down, icon=icon_down, icon_only=True),
+    Music_Button(400, 335, 50, 50, '', down, icon=icon_down, icon_only=True),
+    Music_Button(500, 335, 50, 50, '', up, icon=icon_up, icon_only=True),
     Music_Button(250, 160, 50, 50, '', close_music, icon=icon_close, icon_only=True)
 ]
 
@@ -398,7 +399,7 @@ while running:
         object.process()
 
 
-    if show_settings:
+    if show_settings and not show_music:
         # Créer un overlay semi-transparent
         overlay = pygame.Surface((800, 600), pygame.SRCALPHA)
         overlay.fill(SEMI_TRANSPARENT)
@@ -413,12 +414,15 @@ while running:
         settings_title_rect = settings_title.get_rect(center=(400, 200))
         screen.blit(settings_title, settings_title_rect)
         
-        if not show_music :
-            for btn in settings_buttons:
-                btn.process()
-    
-    if show_music:
 
+        for btn in settings_buttons:
+            btn.process()
+    
+    elif show_music :
+        overlay = pygame.Surface((800, 600), pygame.SRCALPHA)
+        overlay.fill(SEMI_TRANSPARENT)
+        screen.blit(overlay, (0, 0))
+        
         screen.blit(music_panel, music_panel_rect)
         music_title = font.render("Sons", True, WHITE)
         music_title_rect = music_title.get_rect(center=(400, 200))
