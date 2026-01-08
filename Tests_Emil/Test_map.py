@@ -19,8 +19,10 @@ def audio_device_available():
 
 pygame.display.init()
 pygame.font.init()
+
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
+LEN_SQUARE = 64
 dt = 0
 
 Actual_map = D.creation_map_rectangle(20,20)
@@ -48,6 +50,11 @@ while running:
             running = False
     screen.fill("purple")
     keys = pygame.key.get_pressed()
+
+    # for i in range(len(Map_tiles)):
+    #     for b in range(len(Map_tiles[i])):
+    #             tuty = 2*16*GLOBAL_X_SIZE
+    #             list_loaded_tiles[Map_tiles[i,b]].draw_self(screen,(b-Human1.pos[0]+S_WIDTH/(tuty),i-Human1.pos[1]+S_HEIGHT/(tuty)),(GLOBAL_X_SIZE,GLOBAL_Y_SIZE))
 
     for y in range(Actual_map.shape[0]):
         for x in range(Actual_map.shape[1]):
