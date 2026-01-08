@@ -2,6 +2,7 @@
 import pygame # python3 -m pip install -U pygame --user
 import os
 import random
+import webbrowser
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
@@ -326,10 +327,14 @@ def up():
 def down():
     print("music_down")
 
+def redirect():
+    webbrowser.open("https://discord.gg/EBkmmfwn")
+
+
 Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
 Button(70, 70, 50, 50, '', go_settings, icon=icon_settings, icon_only=True )
 Button(730, 70, 50, 50, "", myFunction, icon=icon_info, icon_only=True)
-Button(730, 120, 50, 50, "", myFunction, icon=icon_discord, icon_only=True)
+Button(730, 120, 50, 50, "", redirect, icon=icon_discord, icon_only=True)
 Button(730, 170, 50, 50, "", myFunction, icon=icon_dons, icon_only=True)
 Button(120, 70, 50, 50, "", myFunction, icon=icon_quit, icon_only=True)
 
