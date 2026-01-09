@@ -56,6 +56,8 @@ while running:
     #             tuty = 2*16*GLOBAL_X_SIZE
     #             list_loaded_tiles[Map_tiles[i,b]].draw_self(screen,(b-Human1.pos[0]+S_WIDTH/(tuty),i-Human1.pos[1]+S_HEIGHT/(tuty)),(GLOBAL_X_SIZE,GLOBAL_Y_SIZE))
 
+    #     def draw_self(self,screen,pos,global_sizes):
+    #     screen.blit(pygame.transform.scale(self.image,(16*global_sizes[0],16*global_sizes[1]))  ,(pos[0]*16*global_sizes[0],pos[1]*16*global_sizes[1]))
     for y in range(Actual_map.shape[0]):
         for x in range(Actual_map.shape[1]):
             List_tiles[Actual_map[x,y]].blit_self(screen,(x*64,y*64))
