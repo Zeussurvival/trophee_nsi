@@ -20,7 +20,8 @@ def audio_device_available():
 pygame.display.init()
 pygame.font.init()
 
-screen = pygame.display.set_mode((1280, 720))
+W,H = (1280, 720)
+screen = pygame.display.set_mode((W,H))
 clock = pygame.time.Clock()
 LEN_SQUARE = 64
 dt = 0
@@ -41,7 +42,7 @@ for y in range(Actual_map.shape[0]):
 print(Actual_map_pollution)
 
 
-Robot = CH.Humanoid("robot_front_wait.png",["robot_front_walking.png"])
+Robot = CH.Humanoid((5*LEN_SQUARE,5*LEN_SQUARE),100,5,2,"robot_front_wait.png",["robot_front_walking.png"],LEN_SQUARE)
 
 running = True
 while running:
@@ -60,9 +61,10 @@ while running:
     #     screen.blit(pygame.transform.scale(self.image,(16*global_sizes[0],16*global_sizes[1]))  ,(pos[0]*16*global_sizes[0],pos[1]*16*global_sizes[1]))
     for y in range(Actual_map.shape[0]):
         for x in range(Actual_map.shape[1]):
-            List_tiles[Actual_map[x,y]].blit_self(screen,(x*64,y*64))
+            List_tiles[Actual_map[x,y]].blit_self(screen,(x*64-Robot.pos[0]+W/2-Robot.image_length[0]/2,y*64-Robot.pos[1]+H/2-Robot.image_length[1]/2))
 
-    Robot.do_movement_by_self(keys,dt,screen)
+    # print(Robot.pos)
+    Robot.do_movement_by_self(keys,dt,screen,Actual_map)
     pygame.display.flip()
     dt = clock.tick(60) / 1000
 

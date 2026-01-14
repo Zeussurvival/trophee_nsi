@@ -18,12 +18,13 @@ frames_image_dir = os.path.join(main_dir,"Tiles/frames")
 #         else:
 #             self.background_image = None
 class Humanoid:
-    def __init__(self,image,list_images):
+    def __init__(self,pos,pv,base_damage,speed,image,list_images,LEN_SQUARE):
         self.vect = pygame.math.Vector2(0,0)
-        self.pos = (2,2)
-        self.pv = 100
-        self.speed = 3 * 64
-
+        self.pos = pos
+        self.pv = pv
+        self.speed = speed * LEN_SQUARE
+        self.base_damage = base_damage
+        self.image_length = (64,96)
 
 
 
@@ -52,12 +53,14 @@ class Humanoid:
         else:
             screen.blit(self.True_list_images[0],vrai_pos)
         self.blit_center_self(screen,pos,key_pressed)
+        
     def blit_center_self(self,screen,pos,key_pressed):
-        H,W = pygame.Surface.get_height(screen)-32,pygame.Surface.get_width(screen)-48
-        screen.blit(self.image,(W/2,H/2))
-        pass
+        H,W = pygame.Surface.get_height(screen),pygame.Surface.get_width(screen) #self.image_length[1]/2
+        screen.blit(self.image,(W/2-self.image_length[0]/2,H/2-self.image_length[1]/2))
+        pygame.draw.line(screen,"green",(W/2,H/2-100),(W/2,H/2+100)) # Croix central
+        pygame.draw.line(screen,"green",(W/2-100,H/2),(W/2+100,H/2)) # Croix central
 
-    def do_movement_by_self(self,keys,dt,screen):
+    def do_movement_by_self(self,keys,dt,screen,Actual_map):
         last_key_pressed = []
         if keys[pygame.K_q]:
             self.vect[0] -= self.speed * dt
@@ -75,11 +78,21 @@ class Humanoid:
         if self.vect.length()!= 0: # eviter de faire des calculs pour rien ET ...
             if self.vect.length() / (self.speed *dt + 10 **-10) > 1:
                 self.vect = self.vect.normalize() * self.speed *dt
-            self.pos += self.vect
-            if self.pos[0] - 0 < 0: # le -0 sert a faire une collision simple eviter de sortir de la map niveau image du joueur et le nb devrait etre taille image / 2
-                self.pos[0] = 0 
-            if self.pos[1] - 0 < 0:
-                self.pos[1] = 0 
+            # if self.pos[0] - 0 < 0: # le -0 sert a faire une collision simple eviter de sortir de la map niveau image du joueur et le nb devrait etre taille image / 2
+            #     self.pos[0] = 0 
+            # if self.pos[1] - 0 < 0:
+            #     self.pos[1] = 0
+            self.do_collision_check(self.vect,self.pos,Actual_map)
+
             self.pos[0],self.pos[1] = round(self.pos[0],2),round(self.pos[1],2)
             self.vect = pygame.math.Vector2(0,0)
-        self.blit_self(screen,self.pos,last_key_pressed)
+        self.blit_center_self(screen,self.pos,last_key_pressed)
+
+    def do_collision_check(self,vect_mvt,pos,Map):
+        final_posi = pos + vect_mvt
+        final_vect = vect_mvt
+        maxi_check = (vect_mvt[0] **2 + vect_mvt[1] **2) *0.1
+        # while final_vect[0] **2 + final_vect[1] **2 > maxi_check:  # pure collision check
+        #     final_vect * 0.4
+        self.pos += vect_mvt
+        
