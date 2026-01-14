@@ -39,7 +39,13 @@ class Dialogue():
         if pygame.mouse.get_pressed():
             if self.one_press :
                 self.onclickFunction()
-            elif not self.already_pressed = True
+            elif not self.already_pressed:
+                self.onclickFunction()
+                self.already_pressed = True
+            else :
+                self.already_pressed = True
+        else :
+            self.already_pressed = False
 
 
 
