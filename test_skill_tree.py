@@ -148,26 +148,12 @@ class SkillNode:
         # Couleur du nœud
         if is_unlocked:
             color = CYAN_400
-            glow_color = (*CYAN_400, 30)
         elif is_available and skill_points >= self.data['cost']:
             color = BLUE_400
-            glow_color = (*BLUE_400, 30)
         elif is_available:
             color = (100, 120, 150)
-            glow_color = (100, 120, 150, 20)
         else:
             color = (50, 50, 70)
-            glow_color = (50, 50, 70, 15)
-        
-        # Effet de glow
-        if is_unlocked or (is_available and self.hover):
-            for i in range(3):
-                glow_rect = self.rect.inflate(i * 15, i * 15)
-                glow_surface = pygame.Surface((glow_rect.width, glow_rect.height), pygame.SRCALPHA)
-                pygame.draw.circle(glow_surface, glow_color, 
-                                 (glow_rect.width // 2, glow_rect.height // 2), 
-                                 glow_rect.width // 2)
-                screen.blit(glow_surface, glow_rect.topleft)
         
         
         # Choisir l'image hexagone selon le statut

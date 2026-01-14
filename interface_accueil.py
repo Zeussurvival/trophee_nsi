@@ -23,7 +23,7 @@ robot = os.path.join(assets_dir,"Robot")
 
 
 background_original = pygame.image.load(os.path.join(X3_dir,"Card X5.png")).convert_alpha()
-
+time_to_quit = False
 
 screen_width, screen_height = screen.get_size()
 img_width, img_height = background_original.get_size()
@@ -330,13 +330,16 @@ def down():
 def redirect():
     webbrowser.open("https://discord.gg/EBkmmfwn")
 
+def quit():
+    global running
+    running = False
 
 Button(400, 450, 140, 50, 'Jouer', myFunction, icon=icon_play)
 Button(70, 70, 50, 50, '', go_settings, icon=icon_settings, icon_only=True )
 Button(730, 70, 50, 50, "", myFunction, icon=icon_info, icon_only=True)
 Button(730, 120, 50, 50, "", redirect, icon=icon_discord, icon_only=True)
 Button(730, 170, 50, 50, "", myFunction, icon=icon_dons, icon_only=True)
-Button(120, 70, 50, 50, "", myFunction, icon=icon_quit, icon_only=True)
+Button(120, 70, 50, 50, "", quit, icon=icon_quit, icon_only=True)
 
 settings_buttons = [
     Settings_Button(400, 300, 50, 50, '', open_music, icon=icon_sound, icon_only=True),
@@ -361,6 +364,7 @@ perso_speed_y = random.choice([-200, -150, 150, 200])
 
 
 while running:
+    
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
     for event in pygame.event.get():
@@ -372,6 +376,7 @@ while running:
                     show_music = False
                 elif show_settings:
                     show_settings = False
+
     # fill the screen with a color to wipe away anything from last frame
     # screen.fill("purple")
     mouse_pos = pygame.mouse.get_pos()
