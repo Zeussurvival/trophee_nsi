@@ -61,6 +61,7 @@ class Humanoid:
         pygame.draw.line(screen,"green",(W/2-100,H/2),(W/2+100,H/2)) # Croix central
 
     def do_movement_by_self(self,keys,dt,screen,Actual_map):
+        self.vect = pygame.math.Vector2(0,0)
         last_key_pressed = []
         if keys[pygame.K_q]:
             self.vect[0] -= self.speed * dt
@@ -85,14 +86,22 @@ class Humanoid:
             self.do_collision_check(self.vect,self.pos,Actual_map)
 
             self.pos[0],self.pos[1] = round(self.pos[0],2),round(self.pos[1],2)
-            self.vect = pygame.math.Vector2(0,0)
         self.blit_center_self(screen,self.pos,last_key_pressed)
 
     def do_collision_check(self,vect_mvt,pos,Map):
         final_posi = pos + vect_mvt
-        final_vect = vect_mvt
-        maxi_check = (vect_mvt[0] **2 + vect_mvt[1] **2) *0.1
-        # while final_vect[0] **2 + final_vect[1] **2 > maxi_check:  # pure collision check
-        #     final_vect * 0.4
-        self.pos += vect_mvt
+
+        fake_pos = final_posi
+        if fake_pos[0] - self.image_length[0]/2 < 0: # Check les collisions pour les bords de la map
+            fake_pos[0] = self.image_length[0]/2
+        if fake_pos[1] - self.image_length[1]/2< 0:
+            fake_pos[1] = self.image_length[1]/2
+        if fake_pos[0] + self.image_length[0]/2 > Map.shape[1] * 64: # 64 et pas LEN SQUARE !!
+            fake_pos[0] = Map.shape[1] * 64 - self.image_length[0]/2
+        if fake_pos[1] + self.image_length[1]/2 > Map.shape[1] * 64:
+            fake_pos[1] = Map.shape[1] * 64 - self.image_length[1]/2
+
+        print(vect_mvt.length())
+        self.pos = fake_pos
+
         
