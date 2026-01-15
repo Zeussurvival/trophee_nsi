@@ -1,5 +1,13 @@
 # Example file showing a circle moving on screen
 import pygame # python3 -m pip install -U pygame --user
+import os
+
+
+main_dir = os.path.split(os.path.abspath(__file__))[0]
+assets_dir = os.path.join(main_dir,"assets")
+
+dialogue_image = pygame.image.load(os.path.join(assets_dir, "dialogue_box.png"))
+
 
 # pygame setup
 pygame.init()
@@ -7,13 +15,13 @@ screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 dt = 0
-
+objects = []
 
 
 dialogue_box_width = 400
 dialogue_box_height = 200
 dialogue_box_x = (screen.get_width() - dialogue_box_width) // 2
-dialogue_box_y = (screen.get_height - dialogue_box_height) // 2
+dialogue_box_y = (screen.get_height() - dialogue_box_height) // 2
 dialogue_box = False
 
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
@@ -34,6 +42,11 @@ class Dialogue():
 
 
         self.normal_image = pygame.transform.scale(dialogue_image, (width, height))
+        objects.append(self)
+
+    def draw(self, screen):
+    # Dessiner l'image de la boîte de dialogue
+        screen.blit(self.normal_image, self.dialogue_rect)
 
     def process(self):
         if pygame.mouse.get_pressed():
@@ -56,6 +69,12 @@ def open_dialogue_box ():
     global dialogue_box
     dialogue_box = True
 
+
+def next():
+    print("next")
+
+Dialogue( 650,600, 894, 200, "hello", next)
+
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -77,6 +96,10 @@ while running:
         player_pos.x -= 300 * dt
     if keys[pygame.K_d]:
         player_pos.x += 300 * dt
+
+    for object in objects:
+        object.process()
+        object.draw(screen)
 
     # flip() the display to put your work on screen
     pygame.display.flip()
