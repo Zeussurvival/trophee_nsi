@@ -21,6 +21,8 @@ timer = pygame.time.Clock()
 counter = 0
 speed = 3
 done = False
+active_message = 0
+
 
 dialogue_image = pygame.image.load(os.path.join(assets_dir, "dialogue_box.png"))
 police_dialogue_path = os.path.join(police_dir, "police_dialogue.ttf")
@@ -88,26 +90,33 @@ def open_dialogue_box ():
 def next():
     print("next")
 
-dialogue_1 = Dialogue( 640,600, 894, 200, "hello tgretf regfeferhy", next)
+dialogue_1 = Dialogue( 640,600, 894, 200, ["hello tgretf regfeferhy hzdeeeee", "heudfhzedihzi", "fgregg'g"], next)
+message = dialogue_1.dialogue_text[active_message]
 
 while running:
 
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
-    if counter < speed * len(dialogue_1.dialogue_text) :
+    if counter < speed * len(message) :
         counter +=1
-    elif counter >= speed * len(dialogue_1.dialogue_text):
+    elif counter >= speed * len(message):
         done = True
    
-    dialogue_1.snip = dialogue_1.dialogue_text[0:counter//speed]
+    dialogue_1.snip = message[0:counter//speed]
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        # if event.type == pygame.KEYDOWN:
+        #     if event.key == pygame.K_ESCAPE :
+        #         if dialogue_box:
+        #             dialogue_box = False
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE :
-                if dialogue_box:
-                    dialogue_box = False
+            if event.key == (pygame.K_SPACE or pygame.K_RETURN) and done and active_message < len(dialogue_1.dialogue_text) - 1:
+                active_message += 1
+                done = False
+                message = dialogue_1.dialogue_text[active_message]
+                counter = 0
 
 
     screen.fill("purple")
