@@ -27,6 +27,7 @@ SKILLS = {
         'name': 'CORE SYSTEM',
         'description': 'Base neural processing',
         'cost': 0,
+        'max_level':1,
         'pos': (700, 210),
         'tier': 1,
         'dependencies': []
@@ -38,6 +39,7 @@ SKILLS = {
         'name': 'VISION MODULE',
         'description': 'Enhanced optical sensors',
         'cost': 2,
+        'max_level':1,
         'pos': (400, 360),
         'tier': 2,
         'dependencies': ['core']
@@ -47,6 +49,7 @@ SKILLS = {
         'name': 'CPU BOOST',
         'description': 'Faster processing speed',
         'cost': 2,
+        'max_level':1,
         'pos': (700, 360),
         'tier': 2,
         'dependencies': ['core']
@@ -56,6 +59,7 @@ SKILLS = {
         'name': 'MOBILITY',
         'description': 'Improved movement',
         'cost': 2,
+        'max_level':1,
         'pos': (1000, 360),
         'tier': 2,
         'dependencies': ['core']
@@ -67,6 +71,7 @@ SKILLS = {
         'name': 'AI VISION',
         'description': 'Object recognition',
         'cost': 3,
+        'max_level':1,
         'pos': (300, 510),
         'tier': 3,
         'dependencies': ['vision']
@@ -76,6 +81,7 @@ SKILLS = {
         'name': 'NIGHT VISION',
         'description': 'See in darkness',
         'cost': 3,
+        'max_level':1,
         'pos': (500, 510),
         'tier': 3,
         'dependencies': ['vision']
@@ -85,6 +91,7 @@ SKILLS = {
         'name': 'OVERCLOCK',
         'description': 'Maximum performance',
         'cost': 4,
+        'max_level':1,
         'pos': (700, 510),
         'tier': 3,
         'dependencies': ['processing']
@@ -94,6 +101,7 @@ SKILLS = {
         'name': 'TURBO MODE',
         'description': 'Speed boost',
         'cost': 3,
+        'max_level':1,
         'pos': (900, 510),
         'tier': 3,
         'dependencies': ['mobility']
@@ -103,6 +111,7 @@ SKILLS = {
         'name': 'FLIGHT',
         'description': 'Aerial capabilities',
         'cost': 4,
+        'max_level':1,
         'pos': (1100, 510),
         'tier': 3,
         'dependencies': ['mobility']
@@ -114,6 +123,7 @@ SKILLS = {
         'name': 'QUANTUM CORE',
         'description': 'Ultimate upgrade',
         'cost': 5,
+        'max_level':1,
         'pos': (700, 660),
         'tier': 4,
         'dependencies': ['overclock', 'ai_vision', 'turbo']
@@ -128,25 +138,36 @@ class SkillNode:
         self.rect.center = skill_data['pos']
         self.hover = False
         self.particles = []
+        self.level = 0
         
-    def is_available(self, unlocked_skills):
-        if self.data['id'] in unlocked_skills:
+    def is_available(self, skill_levels):
+        current_level = skill_levels.get(self.data['id'], 0)
+
+        if current_level >= self.data.get('max_level', 1):
             return False
+
         for dep in self.data['dependencies']:
-            if dep not in unlocked_skills:
+            if skill_levels.get(dep, 0) == 0:
                 return False
+
         return True
+
     
-    def is_unlocked(self, unlocked_skills):
-        return self.data['id'] in unlocked_skills
+    def is_maxed(self, skill_levels):
+        return skill_levels.get(self.data['id'], 0) >= self.data.get('max_level', 1)
+
     
-    def draw(self, screen, unlocked_skills, skill_points, font, small_font):
-        is_unlocked = self.is_unlocked(unlocked_skills)
-        is_available = self.is_available(unlocked_skills)
+    def draw(self, screen, skill_levels, skill_points, font, small_font):
+        level = skill_levels.get(self.data['id'], 0)
+        max_level = self.data.get('max_level', 1)
+
+        is_maxed = self.is_maxed(skill_levels)
+        is_available = self.is_available(skill_levels)
+
         
             
         # Couleur du nœud
-        if is_unlocked:
+        if is_maxed:
             color = CYAN_400
         elif is_available and skill_points >= self.data['cost']:
             color = BLUE_400
@@ -157,7 +178,7 @@ class SkillNode:
         
         
         # Choisir l'image hexagone selon le statut
-        if is_unlocked:
+        if is_maxed:
             hex_img = pygame.image.load('assets/SkillTree/hexa_bought.png')
         elif is_available and skill_points >= self.data['cost']:
             hex_img = pygame.image.load('assets/SkillTree/hexa_canbuy.png')
@@ -165,7 +186,7 @@ class SkillNode:
             hex_img = pygame.image.load('assets/SkillTree/hexa_unlocked.png')
         else:
             hex_img = pygame.image.load('assets/SkillTree/hexa_locked.png')
-        
+
         # Redimensionner et centrer l'hexagone
         hex_img = pygame.transform.scale(hex_img, (140, 151.5))
         hex_rect = hex_img.get_rect(center=self.rect.center)
@@ -180,21 +201,47 @@ class SkillNode:
         name_lines = self.data['name'].split()
         y_offset = -10
         for line in name_lines:
-            name_text = small_font.render(line, True, (255, 255, 255) if is_unlocked or is_available else (100, 100, 120))
+            is_active = level > 0
+            name_text = small_font.render(line, True, (255, 255, 255) if is_active or is_available else (100, 100, 120))
             name_rect = name_text.get_rect(center=(self.rect.centerx, self.rect.centery + y_offset))
             screen.blit(name_text, name_rect)
             y_offset += 18
+
+        # Niveau
+        level = skill_levels.get(self.data['id'], 0)
+        max_level = self.data.get('max_level', 1)
+
+        level_text = small_font.render(
+            f"LVL {level}/{max_level}",
+            True,
+            CYAN_300
+        )
+        level_rect = level_text.get_rect(
+            center=(self.rect.centerx, self.rect.centery + 55)
+        )
+        screen.blit(level_text, level_rect)
+
+
         
         # Coût
-        if not is_unlocked:
-            cost_text = small_font.render(f"{self.data['cost']} pts", True, 
-                                        CYAN_300 if skill_points >= self.data['cost'] else (150, 150, 150))
-            cost_rect = cost_text.get_rect(center=(self.rect.centerx, self.rect.centery + 35))
+        if not is_maxed:
+            cost_text = small_font.render(
+                f"{self.data['cost']} pts",
+                True,
+                CYAN_300 if skill_points >= self.data['cost'] else (150, 150, 150)
+            )
+            cost_rect = cost_text.get_rect(
+                center=(self.rect.centerx, self.rect.centery + 35)
+            )
             screen.blit(cost_text, cost_rect)
         else:
-            unlocked_text = small_font.render("Bought", True, CYAN_400)
-            unlocked_rect = unlocked_text.get_rect(center=(self.rect.centerx, self.rect.centery + 35))
+            unlocked_text = small_font.render("MAX", True, CYAN_400)
+            unlocked_rect = unlocked_text.get_rect(
+                center=(self.rect.centerx, self.rect.centery + 35)
+            )
             screen.blit(unlocked_text, unlocked_rect)
+
+
 
         
         # Tooltip au survol
@@ -234,7 +281,10 @@ class Game:
         
         # État du jeu
         self.skill_points = 10
-        self.unlocked_skills = {'core'}  # Core débloqué par défaut
+        self.skill_levels = {
+        'core': 1
+        }
+
         
         # Nœuds de compétences
         self.skill_nodes = [SkillNode(skill) for skill in SKILLS.values()]
@@ -258,14 +308,24 @@ class Game:
                 reset_rect = pygame.Rect(WIDTH // 2 - 100, 100, 200, 50)
                 if reset_rect.collidepoint(mouse_pos):
                     self.skill_points = 10
-                    self.unlocked_skills = {'core'}
+                    self.skill_levels = {
+                        'core': 1
+                    }
+
                 
                 # Vérifier les nœuds de compétences
                 for node in self.skill_nodes:
                     if node.rect.collidepoint(mouse_pos):
-                        if node.is_available(self.unlocked_skills) and self.skill_points >= node.data['cost']:
-                            self.skill_points -= node.data['cost']
-                            self.unlocked_skills.add(node.data['id'])
+                        if node.is_available(self.is_active) and self.skill_points >= node.data['cost']:
+                            skill_id = node.data['id']
+                            current_level = self.skill_levels.get(skill_id, 0)
+                            max_level = node.data.get('max_level', 1)
+
+                            if current_level < max_level:
+                                self.skill_points -= node.data['cost']
+                                self.skill_levels[skill_id] = current_level + 1
+
+
     
     def draw_background(self):
         self.screen.fill(BG_COLOR)
@@ -292,7 +352,7 @@ class Game:
         points_rect = points_text.get_rect(center=(WIDTH // 2 - 150, 80))
         self.screen.blit(points_text, points_rect)
         
-        modules_text = self.font.render(f"ACTIVE MODULES: {len(self.unlocked_skills)}", True, BLUE_400)
+        modules_text = self.font.render(f"ACTIVE MODULES: {len(self.is_active)}", True, BLUE_400)
         modules_rect = modules_text.get_rect(center=(WIDTH // 2 + 150, 80))
         self.screen.blit(modules_text, modules_rect)
         
@@ -317,10 +377,10 @@ class Game:
                 start_pos = dep_skill['pos']
                 end_pos = node.data['pos']
             
-                if node.is_unlocked(self.unlocked_skills):
+                if self.skill_levels.get(node.data['id'], 0) > 0:
                     color = CYAN_400
                     width = 3
-                elif dep_id in self.unlocked_skills:
+                elif self.skill_levels.get(dep_id, 0) > 0:
                     color = BLUE_400
                     width = 2
                 else:
@@ -340,12 +400,14 @@ class Game:
             
             # Dessiner les nœuds de compétences
             for node in self.skill_nodes:
-                node.draw(self.screen,
-                self.unlocked_skills,
-                self.skill_points,
-                self.font,
-                self.small_font
+                node.draw(
+                    self.screen,
+                    self.skill_levels,
+                    self.skill_points,
+                    self.font,
+                    self.small_font
                 )
+
             
             self.draw_ui()
             
