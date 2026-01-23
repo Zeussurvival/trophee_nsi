@@ -39,7 +39,7 @@ SKILLS = {
         'name': 'VISION MODULE',
         'description': 'Enhanced optical sensors',
         'cost': 2,
-        'max_level':1,
+        'max_level':3,
         'pos': (400, 360),
         'tier': 2,
         'dependencies': ['core']
@@ -316,7 +316,7 @@ class Game:
                 # Vérifier les nœuds de compétences
                 for node in self.skill_nodes:
                     if node.rect.collidepoint(mouse_pos):
-                        if node.is_available(self.is_active) and self.skill_points >= node.data['cost']:
+                        if node.is_available(self.skill_levels) and self.skill_points >= node.data['cost']:
                             skill_id = node.data['id']
                             current_level = self.skill_levels.get(skill_id, 0)
                             max_level = node.data.get('max_level', 1)
@@ -352,7 +352,7 @@ class Game:
         points_rect = points_text.get_rect(center=(WIDTH // 2 - 150, 80))
         self.screen.blit(points_text, points_rect)
         
-        modules_text = self.font.render(f"ACTIVE MODULES: {len(self.is_active)}", True, BLUE_400)
+        modules_text = self.font.render(f"ACTIVE MODULES: {sum(1 for level in self.skill_levels.values() if level > 0)}", True, BLUE_400)
         modules_rect = modules_text.get_rect(center=(WIDTH // 2 + 150, 80))
         self.screen.blit(modules_text, modules_rect)
         
