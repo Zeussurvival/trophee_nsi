@@ -68,6 +68,7 @@ while running:
 
     print(Robot.pos)
     Robot.do_movement_by_self(keys,dt,screen,Actual_map)
+    Robot.draw_hotbar(screen)
     pygame.display.flip()
     if time.time()-time_0 > dt:
         print( " OH SHIT")
