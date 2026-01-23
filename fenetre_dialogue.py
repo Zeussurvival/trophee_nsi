@@ -6,12 +6,13 @@ import os
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 assets_dir = os.path.join(main_dir,"assets")
 police_dir = os.path.join(assets_dir,"polices")
-
+sounds_dir = os.path.join(assets_dir, "sounds")
 
 
 # pygame setup
 pygame.init()
 pygame.font.init()
+pygame.mixer.init()
 screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
@@ -26,7 +27,9 @@ active_message = 0
 
 dialogue_image = pygame.image.load(os.path.join(assets_dir, "dialogue_box.png"))
 police_dialogue_path = os.path.join(police_dir, "police_dialogue.ttf")
-
+dialogue_sounds_path = os.path.join(sounds_dir, "typewriter.mp3")
+text_sound = pygame.mixer.Sound(dialogue_sounds_path)
+text_sound.set_volume(0.5)
 
 dialogue_box_width = 400
 dialogue_box_height = 200
@@ -78,10 +81,6 @@ class Dialogue():
             self.already_pressed = False
 
 
-
-
-
-
 def open_dialogue_box ():
     global dialogue_box
     dialogue_box = True
@@ -90,34 +89,47 @@ def open_dialogue_box ():
 def next():
     print("next")
 
-dialogue_1 = Dialogue( 640,600, 894, 200, ["hello tgretf regfeferhy hzdeeeee", "heudfhzedihzi", "fgregg'g"], next)
+dialogue_1 = Dialogue( 640,600, 894, 200, ["Initialisation…", "Unité de nettoyage autonome : R-0.", "Statut de la planète : inhabitable.", "Mission prioritaire : nettoyer."], next)
 message = dialogue_1.dialogue_text[active_message]
 
 while running:
-
+    previous_counter = counter 
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
     if counter < speed * len(message) :
         counter +=1
     elif counter >= speed * len(message):
         done = True
+        text_sound.stop()
    
+
+    current_char = counter // speed
+    previous_char = previous_counter // speed
+    if current_char > previous_char and current_char % 2 == 0 and not done:
+        text_sound.play()
+
+    # if current_char > previous_char and not done:
+    #     text_sound.play()
+    
     dialogue_1.snip = message[0:counter//speed]
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        # if event.type == pygame.KEYDOWN:
-        #     if event.key == pygame.K_ESCAPE :
-        #         if dialogue_box:
-        #             dialogue_box = False
         if event.type == pygame.KEYDOWN:
-            if event.key == (pygame.K_SPACE or pygame.K_RETURN) and done and active_message < len(dialogue_1.dialogue_text) - 1:
-                active_message += 1
-                done = False
-                message = dialogue_1.dialogue_text[active_message]
-                counter = 0
-
+            if event.key == (pygame.K_SPACE or pygame.K_RETURN):
+                if done :
+                    if active_message < len(dialogue_1.dialogue_text) - 1:
+                        active_message += 1
+                        done = False
+                        message = dialogue_1.dialogue_text[active_message]
+                        counter = 0
+                    else :
+                        dialogue_box = False
+                else:
+                    counter = speed * len(message)
+                    done = True
+                    text_sound.stop() 
 
     screen.fill("purple")
 
@@ -138,6 +150,7 @@ while running:
         for object in objects:
             object.process()
             object.draw(screen)
+        
 
     # flip() the display to put your work on screen
     pygame.display.flip()
