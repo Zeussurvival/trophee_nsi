@@ -25,6 +25,10 @@ class Humanoid:
         self.speed = speed * LEN_SQUARE
         self.base_damage = base_damage
         self.image_length = (64,96)
+        self.hotbar_slot = [None,None,None,None,None]
+        self.hotbar_number = 5
+        self.inventory = []
+        self.inventory = 20
 
 
 
@@ -101,7 +105,6 @@ class Humanoid:
         if fake_pos[1] + self.image_length[1]/2 > Map.shape[1] * 64:
             fake_pos[1] = Map.shape[1] * 64 - self.image_length[1]/2
 
-        print(vect_mvt.length())
         self.pos = fake_pos
 
         

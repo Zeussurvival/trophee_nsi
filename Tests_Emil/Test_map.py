@@ -1,9 +1,11 @@
 import pygame
 import numpy
 import random
+import time
 import Test_def as D
 import Test_classe_tile as CT
 import Test_classe_humain as CH
+import Test_classe_objets as CO
 import winreg
 def audio_device_available():
     # Retourne True si Windows a AU MOINS un périphérique audio fonctionnel.
@@ -29,9 +31,6 @@ dt = 0
 Actual_map = D.creation_map_rectangle(20,20)
 Actual_map_pollution = D.set_pollution_map_rectangle(10,10,Actual_map,5)
 
-Actual_map[0,2] = 1
-print(Actual_map)
-
 List_tiles = [CT.Tile("background_1.png",None,0),CT.Tile("background_1.png",None,90),CT.Tile("background_1.png",None,180),CT.Tile("background_1.png",None,270),\
               CT.Tile("background_2.png",None,0),CT.Tile("background_2.png",None,90),CT.Tile("background_2.png",None,180),CT.Tile("background_2.png",None,270),\
               ]
@@ -41,31 +40,37 @@ for y in range(Actual_map.shape[0]):
         Actual_map[x,y] = random.randint(0,7)
 print(Actual_map_pollution)
 
+List_ground_objets = []
+pomme = CO.OBJET("apple.png","Pomme","Une pomme bien délicieuse")
+List_ground_objets.append((pomme,(300,200)))
+print(List_ground_objets)
+bush = CO.OBJET("bush.png","Buisson","Ce buisson permet de cultiver des pommes")
+
 
 Robot = CH.Humanoid((5*LEN_SQUARE,5*LEN_SQUARE),100,5,5,"robot_front_wait.png",["robot_front_walking.png"],LEN_SQUARE)
 
 running = True
 while running:
+    time_0 = time.time()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
     screen.fill("purple")
     keys = pygame.key.get_pressed()
 
-    # for i in range(len(Map_tiles)):
-    #     for b in range(len(Map_tiles[i])):
-    #             tuty = 2*16*GLOBAL_X_SIZE
-    #             list_loaded_tiles[Map_tiles[i,b]].draw_self(screen,(b-Human1.pos[0]+S_WIDTH/(tuty),i-Human1.pos[1]+S_HEIGHT/(tuty)),(GLOBAL_X_SIZE,GLOBAL_Y_SIZE))
-
-    #     def draw_self(self,screen,pos,global_sizes):
-    #     screen.blit(pygame.transform.scale(self.image,(16*global_sizes[0],16*global_sizes[1]))  ,(pos[0]*16*global_sizes[0],pos[1]*16*global_sizes[1]))
     for y in range(Actual_map.shape[0]):
         for x in range(Actual_map.shape[1]):
             List_tiles[Actual_map[x,y]].blit_self(screen,(x*64-Robot.pos[0]+W/2, y*64-Robot.pos[1]+H/2))
 
+    for obj in List_ground_objets:
+        screen.blit(pygame.transform.scale(obj[0].image,(32,32)),(obj[1][0]-Robot.pos[0]+W/2, obj[1][1]-Robot.pos[1]+H/2))
+        pass
+
     print(Robot.pos)
     Robot.do_movement_by_self(keys,dt,screen,Actual_map)
     pygame.display.flip()
+    if time.time()-time_0 > dt:
+        print( " OH SHIT")
     dt = clock.tick(60) / 1000
 
 pygame.quit()
