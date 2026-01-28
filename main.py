@@ -16,7 +16,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+    screen.fill("black")
     # fill the screen with a color to wipe away anything from last frame
     screen.fill("purple")
 
