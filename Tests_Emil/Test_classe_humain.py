@@ -29,7 +29,8 @@ class Humanoid:
         self.hotbar_slot = [None,None,None,None,None]
         self.hotbar_number = 5
         self.inventory = []
-        self.inventory = 20
+        self.inventory_size = 20
+        self.range_pickup = 2.5
 
 
 
@@ -62,8 +63,8 @@ class Humanoid:
     def blit_center_self(self,screen,pos,key_pressed):
         H,W = pygame.Surface.get_height(screen),pygame.Surface.get_width(screen) #self.image_length[1]/2
         screen.blit(self.image,(W/2-self.image_length[0]/2,H/2-self.image_length[1]/2))
-        pygame.draw.line(screen,"green",(W/2,H/2-100),(W/2,H/2+100)) # Croix central
-        pygame.draw.line(screen,"green",(W/2-100,H/2),(W/2+100,H/2)) # Croix central
+        # pygame.draw.line(screen,"green",(W/2,H/2-100),(W/2,H/2+100)) # Croix central
+        # pygame.draw.line(screen,"green",(W/2-100,H/2),(W/2+100,H/2)) # Croix central
 
     def do_movement_by_self(self,keys,dt,screen,Actual_map):
         self.vect = pygame.math.Vector2(0,0)
@@ -94,9 +95,7 @@ class Humanoid:
         self.blit_center_self(screen,self.pos,last_key_pressed)
 
     def do_collision_check(self,vect_mvt,pos,Map):
-        final_posi = pos + vect_mvt
-
-        fake_pos = final_posi
+        fake_pos = pos + vect_mvt
         if fake_pos[0] - self.image_length[0]/2 < 0: # Check les collisions pour les bords de la map
             fake_pos[0] = self.image_length[0]/2
         if fake_pos[1] - self.image_length[1]/2< 0:
@@ -105,10 +104,18 @@ class Humanoid:
             fake_pos[0] = Map.shape[1] * 64 - self.image_length[0]/2
         if fake_pos[1] + self.image_length[1]/2 > Map.shape[1] * 64:
             fake_pos[1] = Map.shape[1] * 64 - self.image_length[1]/2
-
         self.pos = fake_pos
 
-            
+
+    def pickup(self,obj):
+        for i in range(len(self.hotbar_slot)):
+            if self.hotbar_slot[i] == None:
+                self.hotbar_slot[i] = obj
+                return True
+        if len(self.inventory) < self.inventory_size - 1:
+            self.inventory[i] = obj
+            return True
+
 
     def draw_hotbar(self,screen):
         lenght_square = 64
@@ -126,16 +133,33 @@ class Humanoid:
         
         pygame.draw.rect(screen,"white",(first_x+(lenght_square+width+offset)*self.held_item_indice  -2 ,y - 2,true_lenght + 4,true_lenght + 4 ),width+ 2)
 
+    def change_held_item(self,keys):
+        if keys[pygame.K_1]:
+            self.held_item_indice = 0
+            self.held_item = self.hotbar_slot[0]
+        if keys[pygame.K_2]:
+            self.held_item_indice = 1
+            self.held_item = self.hotbar_slot[1]
+        if keys[pygame.K_3]:
+            self.held_item_indice = 2
+            self.held_item = self.hotbar_slot[2]
+        if keys[pygame.K_4]:
+            self.held_item_indice = 3
+            self.held_item = self.hotbar_slot[3]
+        if keys[pygame.K_5]:
+            self.held_item_indice = 4
+            self.held_item = self.hotbar_slot[4]
 
-    # def do_everything(self,screen,FONT_None,dt,keys):
-    #     if self.detectable and self.alive == True:
-    #         self.moove(keys,dt)
-    #         self.endurance_regen(dt)
-    #     self.draw_hp_endurance(screen,FONT_None)
-    #     self.draw_hotbar(screen)
-    #     if self.alive == False:
-    #         self.death_mesage(screen)
 
+
+
+
+
+
+    def do_all(self,keys,dt,screen,Actual_map):
+        self.do_movement_by_self(keys,dt,screen,Actual_map)
+        self.draw_hotbar(screen)
+        self.change_held_item(keys)
 
     # def use_hand(self,zombie_list,Human):
     #     if self.held_item != None:
@@ -144,34 +168,11 @@ class Humanoid:
     #             self.endurance_last_used = time.time()
     #             self.endurance -= 3 # self.held_item.endurance_used a mettre mais flm la il est 1h41
 
-    #     else:
-    #         print(None) 
-    #     return zombie_list
-
 
     # def attack(self):
-    #     if self.inventaire[0].type == "gun" or "knife" and self.endurance>3:
+    #     if self.hotbar_slot[0].type == "gun" or "knife" and self.endurance>3:
     #         self.endurance_last_used = time.time()
-    #         response = self.inventaire[0].attack()
+    #         response = self.hotbar_slot[0].attack()
     #         print(response)
     #         if response:
     #             self.endurance -= 3
-
-
-    # def change_held_item(self,keys):
-    #     if keys[pygame.K_1]:
-    #         self.held_item_indice = 0
-    #         self.held_item = self.inventaire[0]
-    #     if keys[pygame.K_2]:
-    #         self.held_item_indice = 1
-    #         self.held_item = self.inventaire[1]
-    #     if keys[pygame.K_3]:
-    #         self.held_item_indice = 2
-    #         self.held_item = self.inventaire[2]
-    #     if keys[pygame.K_4]:
-    #         self.held_item_indice = 3
-    #         self.held_item = self.inventaire[3]
-    #     if keys[pygame.K_5]:
-    #         self.held_item_indice = 4
-    #         self.held_item = self.inventaire[4]
-    #     pass

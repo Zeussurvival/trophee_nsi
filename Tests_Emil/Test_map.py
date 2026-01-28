@@ -48,7 +48,7 @@ bush = CO.OBJET("bush.png","Buisson","Ce buisson permet de cultiver des pommes")
 
 
 Robot = CH.Humanoid((5*LEN_SQUARE,5*LEN_SQUARE),100,5,5,"robot_front_wait.png",["robot_front_walking.png"],LEN_SQUARE)
-
+print("running now")
 running = True
 while running:
     time_0 = time.time()
@@ -62,13 +62,20 @@ while running:
         for x in range(Actual_map.shape[1]):
             List_tiles[Actual_map[x,y]].blit_self(screen,(x*64-Robot.pos[0]+W/2, y*64-Robot.pos[1]+H/2))
 
-    for obj in List_ground_objets:
-        screen.blit(pygame.transform.scale(obj[0].image,(32,32)),(obj[1][0]-Robot.pos[0]+W/2, obj[1][1]-Robot.pos[1]+H/2))
-        pass
+    if keys[pygame.K_e]:
+        for obj in List_ground_objets:
+            if (Robot.pos[0] - obj[1][0])**2 +(Robot.pos[1] - obj[1][1])**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
+                if Robot.pickup(obj[0]):
+                    List_ground_objets.remove(obj)
 
-    print(Robot.pos)
-    Robot.do_movement_by_self(keys,dt,screen,Actual_map)
-    Robot.draw_hotbar(screen)
+    for obj in List_ground_objets: # mettre le texte pick up 
+        screen.blit(pygame.transform.scale(obj[0].image,(32,32)),(obj[1][0]-Robot.pos[0]+W/2 - 16,obj[1][1]-Robot.pos[1]+H/2 - 16))
+
+
+    
+
+    # print(Robot.pos)
+    Robot.do_all(keys,dt,screen,Actual_map)
     pygame.display.flip()
     if time.time()-time_0 > dt:
         print( " OH SHIT")
