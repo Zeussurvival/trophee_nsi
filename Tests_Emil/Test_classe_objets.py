@@ -14,3 +14,14 @@ class OBJET():
         self.image = pygame.image.load(os.path.join(img_dir,image_name))
         self.image = pygame.transform.scale(self.image,(64,64))
     
+class Consumable(OBJET):
+    def __init__(self, image_name, name, description):
+        super().__init__(image_name, name, description)
+        self.type = "consumable"
+
+class Tool(OBJET):
+    def __init__(self, image_name, name, description, damage, tier):
+        super().__init__(image_name, name, description)
+        self.type = "tool"
+        self.damage = damage
+        self.tier = tier

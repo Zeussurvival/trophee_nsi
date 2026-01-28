@@ -2,6 +2,7 @@ import pygame
 import numpy
 import random
 import time
+import math
 import Test_def as D
 import Test_classe_tile as CT
 import Test_classe_humain as CH
@@ -43,11 +44,15 @@ print(Actual_map_pollution)
 List_ground_objets = []
 pomme = CO.OBJET("apple.png","Pomme","Une pomme bien délicieuse")
 List_ground_objets.append((pomme,(300,200)))
-print(List_ground_objets)
 bush = CO.OBJET("bush.png","Buisson","Ce buisson permet de cultiver des pommes")
 
 
-Robot = CH.Humanoid((5*LEN_SQUARE,5*LEN_SQUARE),100,5,5,"robot_front_wait.png",["robot_front_walking.png"],LEN_SQUARE)
+Arial_font = pygame.font.SysFont('Arial', 30)
+Surface_text_pickup = Arial_font.render('Press [E] to pick it up !', False, (255,255,255))
+
+
+hotbar = [bush,None,None,None,None]
+Robot = CH.Humanoid((5*LEN_SQUARE,5*LEN_SQUARE),100,5,5,"robot_front_wait.png",["robot_front_walking.png"],LEN_SQUARE,hotbar)
 print("running now")
 running = True
 while running:
@@ -55,7 +60,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    screen.fill("purple")
+    screen.fill("black")
     keys = pygame.key.get_pressed()
 
     for y in range(Actual_map.shape[0]):
@@ -69,6 +74,7 @@ while running:
                     List_ground_objets.remove(obj)
 
     for obj in List_ground_objets: # mettre le texte pick up 
+        screen.blit(Surface_text_pickup, (obj[1][0]-Robot.pos[0]+W/2-Surface_text_pickup.get_size()[0]/2, obj[1][1]-Robot.pos[1]+H/2-Surface_text_pickup.get_size()[1]/2 - 32 - 10 - 8*math.cos(time.time())))
         screen.blit(pygame.transform.scale(obj[0].image,(32,32)),(obj[1][0]-Robot.pos[0]+W/2 - 16,obj[1][1]-Robot.pos[1]+H/2 - 16))
 
 

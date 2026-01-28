@@ -18,7 +18,7 @@ frames_image_dir = os.path.join(main_dir,"Tiles/frames")
 #         else:
 #             self.background_image = None
 class Humanoid:
-    def __init__(self,pos,pv,base_damage,speed,image,list_images,LEN_SQUARE):
+    def __init__(self,pos,pv,base_damage,speed,image,list_images,LEN_SQUARE, hotbar):
         self.vect = pygame.math.Vector2(0,0)
         self.pos = pos
         self.pv = pv
@@ -26,7 +26,7 @@ class Humanoid:
         self.base_damage = base_damage
         self.image_length = (64,96)
         self.held_item_indice = 0
-        self.hotbar_slot = [None,None,None,None,None]
+        self.hotbar = hotbar
         self.hotbar_number = 5
         self.inventory = []
         self.inventory_size = 20
@@ -108,9 +108,9 @@ class Humanoid:
 
 
     def pickup(self,obj):
-        for i in range(len(self.hotbar_slot)):
-            if self.hotbar_slot[i] == None:
-                self.hotbar_slot[i] = obj
+        for i in range(len(self.hotbar)):
+            if self.hotbar[i] == None:
+                self.hotbar[i] = obj
                 return True
         if len(self.inventory) < self.inventory_size - 1:
             self.inventory[i] = obj
@@ -128,27 +128,27 @@ class Humanoid:
         y = screen.get_size()[1] -lenght_square - y_offset
         for i in range(0,number_shown):
             pygame.draw.rect(screen,(100,100,100),(first_x+(lenght_square+width+offset)*i,y,true_lenght,true_lenght),width)
-            if self.hotbar_slot[i] != None:
-                screen.blit(pygame.transform.scale(self.hotbar_slot[i].image,(lenght_square,lenght_square)),(first_x+width+(lenght_square+width+offset)*i,y+width))
+            if self.hotbar[i] != None:
+                screen.blit(pygame.transform.scale(self.hotbar[i].image,(lenght_square,lenght_square)),(first_x+width+(lenght_square+width+offset)*i,y+width))
         
         pygame.draw.rect(screen,"white",(first_x+(lenght_square+width+offset)*self.held_item_indice  -2 ,y - 2,true_lenght + 4,true_lenght + 4 ),width+ 2)
 
     def change_held_item(self,keys):
         if keys[pygame.K_1]:
             self.held_item_indice = 0
-            self.held_item = self.hotbar_slot[0]
+            self.held_item = self.hotbar[0]
         if keys[pygame.K_2]:
             self.held_item_indice = 1
-            self.held_item = self.hotbar_slot[1]
+            self.held_item = self.hotbar[1]
         if keys[pygame.K_3]:
             self.held_item_indice = 2
-            self.held_item = self.hotbar_slot[2]
+            self.held_item = self.hotbar[2]
         if keys[pygame.K_4]:
             self.held_item_indice = 3
-            self.held_item = self.hotbar_slot[3]
+            self.held_item = self.hotbar[3]
         if keys[pygame.K_5]:
             self.held_item_indice = 4
-            self.held_item = self.hotbar_slot[4]
+            self.held_item = self.hotbar[4]
 
 
 
@@ -170,9 +170,9 @@ class Humanoid:
 
 
     # def attack(self):
-    #     if self.hotbar_slot[0].type == "gun" or "knife" and self.endurance>3:
+    #     if self.hotbar[0].type == "gun" or "knife" and self.endurance>3:
     #         self.endurance_last_used = time.time()
-    #         response = self.hotbar_slot[0].attack()
+    #         response = self.hotbar[0].attack()
     #         print(response)
     #         if response:
     #             self.endurance -= 3
