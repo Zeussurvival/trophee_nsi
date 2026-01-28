@@ -20,7 +20,7 @@ dt = 0
 objects = []
 timer = pygame.time.Clock()
 counter = 0
-speed = 3
+speed = 4
 done = False
 active_message = 0
 
@@ -29,7 +29,7 @@ dialogue_image = pygame.image.load(os.path.join(assets_dir, "dialogue_box.png"))
 police_dialogue_path = os.path.join(police_dir, "police_dialogue.ttf")
 dialogue_sounds_path = os.path.join(sounds_dir, "typewriter.mp3")
 text_sound = pygame.mixer.Sound(dialogue_sounds_path)
-text_sound.set_volume(0.5)
+text_sound.set_volume(1)
 
 dialogue_box_width = 400
 dialogue_box_height = 200
@@ -105,7 +105,11 @@ while running:
 
     current_char = counter // speed
     previous_char = previous_counter // speed
-    if current_char > previous_char and current_char % 2 == 0 and not done:
+
+    # if current_char > previous_char and current_char % 2 == 0 and not done:
+    #     text_sound.play()
+
+    if current_char == 1 and previous_char == 0 and not done:
         text_sound.play()
 
     # if current_char > previous_char and not done:
@@ -124,8 +128,10 @@ while running:
                         done = False
                         message = dialogue_1.dialogue_text[active_message]
                         counter = 0
+                        text_sound.stop()
                     else :
                         dialogue_box = False
+                        text_sound.stop()                        
                 else:
                     counter = speed * len(message)
                     done = True
