@@ -42,9 +42,9 @@ for y in range(Actual_map.shape[0]):
 print(Actual_map_pollution)
 
 List_ground_objets = []
-pomme = CO.OBJET("apple.png","Pomme","Une pomme bien délicieuse")
+pomme = CO.Consumable("apple.png","Pomme","Une pomme bien délicieuse")
 List_ground_objets.append((pomme,(300,200)))
-bush = CO.OBJET("bush.png","Buisson","Ce buisson permet de cultiver des pommes")
+bush = CO.Tool("bush.png","Buisson","Ce buisson permet de cultiver des pommes",10,1)
 
 
 Arial_font = pygame.font.SysFont('Arial', 30)
@@ -62,6 +62,7 @@ while running:
             running = False
     screen.fill("black")
     keys = pygame.key.get_pressed()
+    mouse_pos = pygame.mouse.get_pos()
 
     for y in range(Actual_map.shape[0]):
         for x in range(Actual_map.shape[1]):
@@ -73,12 +74,19 @@ while running:
                 if Robot.pickup(obj[0]):
                     List_ground_objets.remove(obj)
 
-    for obj in List_ground_objets: # mettre le texte pick up 
-        screen.blit(Surface_text_pickup, (obj[1][0]-Robot.pos[0]+W/2-Surface_text_pickup.get_size()[0]/2, obj[1][1]-Robot.pos[1]+H/2-Surface_text_pickup.get_size()[1]/2 - 32 - 10 - 8*math.cos(time.time())))
+    for obj in List_ground_objets: # mettre le texte pick up
+        if (Robot.pos[0] - obj[1][0])**2 +(Robot.pos[1] - obj[1][1])**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
+            screen.blit(Surface_text_pickup, (obj[1][0]-Robot.pos[0]+W/2-Surface_text_pickup.get_size()[0]/2, obj[1][1]-Robot.pos[1]+H/2-Surface_text_pickup.get_size()[1]/2 - 32 - 10 - 8*math.cos(time.time())))
         screen.blit(pygame.transform.scale(obj[0].image,(32,32)),(obj[1][0]-Robot.pos[0]+W/2 - 16,obj[1][1]-Robot.pos[1]+H/2 - 16))
 
 
-    
+    # Montrer la case ou ya le curseur
+    obj = Robot.hotbar[Robot.held_item_indice]
+    if (Robot.pos[0] - mouse_pos[0])**2 + (Robot.pos[1] - mouse_pos[1])**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
+        x = mouse_pos[0] // 64
+        y = mouse_pos[1] // 64
+        pygame.draw.rect(screen,"red",(x*64,y*64,x+64,y+64),2)
+        pass
 
     # print(Robot.pos)
     Robot.do_all(keys,dt,screen,Actual_map)

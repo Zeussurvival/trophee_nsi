@@ -129,9 +129,9 @@ class Humanoid:
         for i in range(0,number_shown):
             pygame.draw.rect(screen,(100,100,100),(first_x+(lenght_square+width+offset)*i,y,true_lenght,true_lenght),width)
             if self.hotbar[i] != None:
-                screen.blit(pygame.transform.scale(self.hotbar[i].image,(lenght_square,lenght_square)),(first_x+width+(lenght_square+width+offset)*i,y+width))
-        
+                screen.blit(pygame.transform.scale(self.hotbar[i].image,(lenght_square,lenght_square)),(first_x+width+(lenght_square+width+offset)*i,y+width))        
         pygame.draw.rect(screen,"white",(first_x+(lenght_square+width+offset)*self.held_item_indice  -2 ,y - 2,true_lenght + 4,true_lenght + 4 ),width+ 2)
+
 
     def change_held_item(self,keys):
         if keys[pygame.K_1]:
