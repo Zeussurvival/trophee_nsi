@@ -1,6 +1,4 @@
-import numpy
 import pygame
-import random
 import os
 
 pygame.display.init()
@@ -39,4 +37,3 @@ class Tile:
     def blit_self(self,screen,pos):
         if self.image != None:
             screen.blit(self.image,pos)
-

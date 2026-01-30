@@ -64,11 +64,11 @@ while running:
     keys = pygame.key.get_pressed()
     mouse_pos = pygame.mouse.get_pos()
 
-    for y in range(Actual_map.shape[0]):
+    for y in range(Actual_map.shape[0]): # montre la map
         for x in range(Actual_map.shape[1]):
             List_tiles[Actual_map[x,y]].blit_self(screen,(x*64-Robot.pos[0]+W/2, y*64-Robot.pos[1]+H/2))
 
-    if keys[pygame.K_e]:
+    if keys[pygame.K_e]: #recuperer objets
         for obj in List_ground_objets:
             if (Robot.pos[0] - obj[1][0])**2 +(Robot.pos[1] - obj[1][1])**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
                 if Robot.pickup(obj[0]):
@@ -80,13 +80,19 @@ while running:
         screen.blit(pygame.transform.scale(obj[0].image,(32,32)),(obj[1][0]-Robot.pos[0]+W/2 - 16,obj[1][1]-Robot.pos[1]+H/2 - 16))
 
 
-    # Montrer la case ou ya le curseur
-    obj = Robot.hotbar[Robot.held_item_indice]
-    if (Robot.pos[0] - mouse_pos[0])**2 + (Robot.pos[1] - mouse_pos[1])**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
-        x = mouse_pos[0] // 64
-        y = mouse_pos[1] // 64
-        pygame.draw.rect(screen,"red",(x*64,y*64,x+64,y+64),2)
-        pass
+    obj = Robot.hotbar[Robot.held_item_indice] # Montrer la case ou ya le curseur
+    X = W/2-mouse_pos[0]
+    Y = H/2-mouse_pos[1]
+    A =Robot.pos[0] - X,Robot.pos[1] - Y
+    A = (A[0] //64)*64, (A[1] //64)*64
+    print(A)
+    # print(X,Y)
+    # if X**2 + Y**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
+    #     A = ((X//64)*64,(Y//64)*64)
+    #     A = Robot.pos[0] - A[0],Robot.pos[1]-A[1]
+    #     print(A)
+    #     pygame.draw.rect(screen,"red",(A[0]-(Robot.pos[0]//64)*64+Robot.pos[0]+W/2-64, A[1]-(Robot.pos[1]//64)*64+H/2-64, 64, 64),2)
+    #     pass
 
     # print(Robot.pos)
     Robot.do_all(keys,dt,screen,Actual_map)
