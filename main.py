@@ -23,7 +23,7 @@ dt = 0
 fade_alpha = 255 
 fade_speed = 1
 fade_active = True
-timer = 25
+timer = 70
 
 # Variables dialogue
 
