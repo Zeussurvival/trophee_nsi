@@ -85,7 +85,9 @@ while running:
     Y = H/2-mouse_pos[1]
     A =Robot.pos[0] - X,Robot.pos[1] - Y
     A = (A[0] //64)*64, (A[1] //64)*64
-    print(A)
+    # print(A)
+    B = Robot.pos[0] - A[0], Robot.pos[1] - A[1]
+    print(B)
     # print(X,Y)
     # if X**2 + Y**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
     #     A = ((X//64)*64,(Y//64)*64)
