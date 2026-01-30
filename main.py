@@ -37,7 +37,7 @@ dialogue_box = True
 
 dialogue_sounds_path = os.path.join(sounds_dir, "typewriter.mp3")
 text_sound = pygame.mixer.Sound(dialogue_sounds_path)
-text_sound.set_volume(1)
+text_sound.set_volume(0.5)
 
 
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
@@ -141,7 +141,7 @@ while running:
     current_char = counter // speed
     previous_char = previous_counter // speed
 
-    if current_char == 1 and previous_char == 0 and not done:
+    if current_char == 1 and previous_char == 0 and not done and not fade_active and dialogue_box:
         text_sound.play()
     
     dialogue_1.snip = message[0:counter//speed]
