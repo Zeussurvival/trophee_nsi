@@ -79,22 +79,18 @@ while running:
             screen.blit(Surface_text_pickup, (obj[1][0]-Robot.pos[0]+W/2-Surface_text_pickup.get_size()[0]/2, obj[1][1]-Robot.pos[1]+H/2-Surface_text_pickup.get_size()[1]/2 - 32 - 10 - 8*math.cos(time.time())))
         screen.blit(pygame.transform.scale(obj[0].image,(32,32)),(obj[1][0]-Robot.pos[0]+W/2 - 16,obj[1][1]-Robot.pos[1]+H/2 - 16))
 
-
-    obj = Robot.hotbar[Robot.held_item_indice] # Montrer la case ou ya le curseur
     X = W/2-mouse_pos[0]
     Y = H/2-mouse_pos[1]
-    A =Robot.pos[0] - X,Robot.pos[1] - Y
-    A = (A[0] //64)*64, (A[1] //64)*64
-    # print(A)
-    B = Robot.pos[0] - A[0], Robot.pos[1] - A[1]
-    print(B)
-    # print(X,Y)
-    # if X**2 + Y**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
-    #     A = ((X//64)*64,(Y//64)*64)
-    #     A = Robot.pos[0] - A[0],Robot.pos[1]-A[1]
-    #     print(A)
-    #     pygame.draw.rect(screen,"red",(A[0]-(Robot.pos[0]//64)*64+Robot.pos[0]+W/2-64, A[1]-(Robot.pos[1]//64)*64+H/2-64, 64, 64),2)
-    #     pass
+    Pos_souris_monde = Robot.pos[0] - X,Robot.pos[1] - Y # position de la souris ds le monde c'est A
+    Pos_souris_monde = (Pos_souris_monde[0] // 64)*64, math.floor(Pos_souris_monde[1] // 64)*64 # on va floor (si victor a raison que cest un floor mdr) la position a la case 
+    centre_case = (Pos_souris_monde[0]+32,Pos_souris_monde[1]+32)
+    Pos_reconv_souris_ecran = Robot.pos[0] - centre_case[0], Robot.pos[1] - centre_case[1] # reconversion de la pos monde a la pose ecran
+
+    if Pos_reconv_souris_ecran[0]**2 + Pos_reconv_souris_ecran[1]**2 <= (LEN_SQUARE*Robot.range_pickup+64)**2: # Montrer la case ou ya le curseur
+        screen_pos = W/2  - (Robot.pos[0] - centre_case[0]), H/2  - (Robot.pos[1] - centre_case[1])
+        pygame.draw.rect(screen,"red",(screen_pos[0], screen_pos[1], 64, 64),2) # dessiner le carré rouge
+
+
 
     # print(Robot.pos)
     Robot.do_all(keys,dt,screen,Actual_map)
