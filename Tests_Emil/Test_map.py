@@ -74,6 +74,13 @@ while running:
                 if Robot.pickup(obj[0]):
                     List_ground_objets.remove(obj)
 
+    if keys[pygame.K_n]:
+        if Robot.hotbar[Robot.held_item_indice] != None:
+            List_ground_objets.append((Robot.hotbar[Robot.held_item_indice],Robot.pos))
+            Robot.hotbar[Robot.held_item_indice] = None
+
+
+
     for obj in List_ground_objets: # mettre le texte pick up
         if (Robot.pos[0] - obj[1][0])**2 +(Robot.pos[1] - obj[1][1])**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
             screen.blit(Surface_text_pickup, (obj[1][0]-Robot.pos[0]+W/2-Surface_text_pickup.get_size()[0]/2, obj[1][1]-Robot.pos[1]+H/2-Surface_text_pickup.get_size()[1]/2 - 32 - 10 - 8*math.cos(time.time())))

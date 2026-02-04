@@ -27,7 +27,7 @@ class Humanoid:
         self.image_length = (64,96)
         self.held_item_indice = 0
         self.hotbar = hotbar
-        self.hotbar_number = 5
+        self.hotbar_len = 5
         self.inventory = []
         self.inventory_size = 20
         self.range_pickup = 2.5
@@ -149,7 +149,6 @@ class Humanoid:
         if keys[pygame.K_5]:
             self.held_item_indice = 4
             self.held_item = self.hotbar[4]
-
 
 
 
