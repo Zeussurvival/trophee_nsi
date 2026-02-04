@@ -98,13 +98,13 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == (pygame.K_SPACE or pygame.K_RETURN):
                 if done :
-                    if active_message < len(dialogue_1.dialogue_text) - 1:
+                    if active_message < len(dialogue_1.dialogue_text) - 1:   # if len(active_message) <= 75
                         active_message += 1
                         done = False
                         message = dialogue_1.dialogue_text[active_message]
                         counter = 0
                         text_sound.stop()
-                    else :
+                    else :                                                   #elif len(active_message)> 75
                         dialogue_box = False
                         text_sound.stop()                        
                 else:

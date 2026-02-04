@@ -29,7 +29,7 @@ clock = pygame.time.Clock()
 LEN_SQUARE = 64
 dt = 0
 
-Actual_map = D.creation_map_rectangle(20,20)
+Actual_map = D.creation_map_rectangle(120,120)
 Actual_map_pollution = D.set_pollution_map_rectangle(10,10,Actual_map,5)
 
 List_tiles = [CT.Tile("background_1.png",None,0),CT.Tile("background_1.png",None,90),CT.Tile("background_1.png",None,180),CT.Tile("background_1.png",None,270),\
@@ -52,7 +52,7 @@ Surface_text_pickup = Arial_font.render('Press [E] to pick it up !', False, (255
 
 
 hotbar = [bush,None,None,None,None]
-Robot = CH.Humanoid((5*LEN_SQUARE,5*LEN_SQUARE),100,5,5,"robot_front_wait.png",["robot_front_walking.png"],LEN_SQUARE,hotbar)
+Robot = CH.Humanoid((15*LEN_SQUARE,15*LEN_SQUARE),100,5,5,"robot_front_wait.png",["robot_front_walking.png"],LEN_SQUARE,hotbar)
 print("running now")
 running = True
 while running:
@@ -99,7 +99,7 @@ while running:
     pygame.display.flip()
     if time.time()-time_0 > dt:
         print(" OH SHIT", time.time()-time_0- dt)
-
+    print(time.time()-time_0- dt)
     dt = clock.tick(120) / 1000
 
 pygame.quit()
