@@ -65,3 +65,12 @@ def set_pollution_map_rectangle(number_of_pos,seed,map_actu,range_pollu):
     # print(new_map)
     # print(Liste_pos)
     return new_map
+
+
+def floor_pollution_map_at_smth(map,floor_num):
+    for i in range(map.shape[0]):
+        for y in range(map.shape[1]):
+            if map[i,y] >floor_num:
+                map[i,y] = floor_num
+    return map
+

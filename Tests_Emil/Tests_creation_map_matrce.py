@@ -28,7 +28,7 @@ dt = 0
 x_map = 50
 y_map = 30
 seed = 25
-pollution_origins = 25
+pollution_origins = 70
 range_pollution = 5
 
 
@@ -40,7 +40,7 @@ range_pollution = 5
 map123 = D.creation_map_rectangle(x_map,y_map)
 map123_pollution = D.set_pollution_map_rectangle(pollution_origins,seed,map123,range_pollution) # number_of_origins,seed,map,range_pollu
 
-
+map123_pollution = D.floor_pollution_map_at_smth(map123_pollution,2)
 
 
 
