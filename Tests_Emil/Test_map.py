@@ -90,7 +90,16 @@ while running:
         screen_pos = W/2  - (Robot.pos[0] - centre_case[0]), H/2  - (Robot.pos[1] - centre_case[1])
         pygame.draw.rect(screen,"red",(screen_pos[0], screen_pos[1], 64, 64),2) # dessiner le carré rouge
 
+    X,Y=(W//2-mouse_pos[0],H//2-mouse_pos[1])
+    Pos_souris_monde=(Robot.pos[0]-X,Robot.pos[1]-Y[1]) # position de la souris ds le monde en pixels
 
+    tile_souris = ((Pos_souris_monde[0]//64)*64,(Pos_souris_monde[1]//64)*64) # on va floor (si victor a raison que cest un floor mdr) la position a la case 
+    centre_tile = (tile_souris[0]+64//2,tile_souris[1]+64//2) # on prends dcp le centre de la tile
+    diff = (centre_tile[0]-Robot.pos[0],centre_tile[1]-Robot.pos[1]) # reconversion en pos ecran
+    pickup_range=Robot.range_pickup*64 # calcule en pixel la range du robot pour prendre un objet 
+    if diff[0]*diff[0]+diff[1]*diff[1]<=pickup_range*pickup_range:
+        screen_pos=(W//2-(Robot.pos[0]-tile_souris[0]),H//2-(Robot.pos[1]-tile_souris[1]))
+        pygame.draw.rect(screen,"red",(screen_pos[0],screen_pos[1],64,64),2)
 
     # print(Robot.pos)
     Robot.do_all(keys,dt,screen,Actual_map)
