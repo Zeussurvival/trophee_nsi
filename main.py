@@ -23,7 +23,7 @@ dt = 0
 fade_alpha = 255 
 fade_speed = 1
 fade_active = True
-timer = 70
+timer = 180
 
 # Variables dialogue
 
@@ -56,7 +56,8 @@ counter = 0
 speed = 4
 done = False
 active_message = 0
-
+current_frame = 0
+animation_speed = 0.3
 
 dialogue_image = pygame.image.load(os.path.join(assets_dir, "dialogue_box.png"))
 police_dialogue_path = os.path.join(police_dir, "police_dialogue.ttf")
@@ -81,6 +82,13 @@ dialogue_1 = C_D.Dialogue( 640,600, 894, 200, ["Initialisation…", "Unité de n
 message = dialogue_1.dialogue_text[active_message]
 
 
+frames = []
+for i in range(30):
+
+    img = pygame.image.load(f"assets/earth/sprite_{i:02d}.png")
+    img = pygame.transform.scale(img,(256,256))
+    frames.append(img)
+
 while running:
 
 
@@ -90,13 +98,13 @@ while running:
         if event.type == pygame.KEYDOWN:
             if event.key == (pygame.K_SPACE or pygame.K_RETURN):
                 if done :
-                    if active_message < len(dialogue_1.dialogue_text) - 1:
+                    if active_message < len(dialogue_1.dialogue_text) - 1:   # if len(active_message) <= 75
                         active_message += 1
                         done = False
                         message = dialogue_1.dialogue_text[active_message]
                         counter = 0
                         text_sound.stop()
-                    else :
+                    else :                                                   #elif len(active_message)> 75
                         dialogue_box = False
                         text_sound.stop()                        
                 else:
@@ -107,13 +115,20 @@ while running:
     screen.fill("purple")
 
     pygame.draw.circle(screen, "red", player_pos, 40)
-
+    current_frame += animation_speed
+    if current_frame >= len(frames):
+        current_frame = 0
+    screen.blit(frames[int(current_frame)], (300, 200)) 
+    earth_rect = frames[int(current_frame)].get_rect(center=(640, 360))
+    screen.blit(frames[int(current_frame)], earth_rect)
        
     if fade_active:
         if timer > 0 :
             screen.fill ((0,0,0))
             timer -=1
+
         else :
+
             fade_alpha -= fade_speed 
             if fade_alpha <= 0:
                 fade_alpha = 0
