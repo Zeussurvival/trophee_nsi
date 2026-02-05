@@ -49,6 +49,7 @@ bush = CO.Tool("bush.png","Buisson","Ce buisson permet de cultiver des pommes",1
 
 Arial_font = pygame.font.SysFont('Arial', 30)
 Surface_text_pickup = Arial_font.render('Press [E] to pick it up !', False, (255,255,255))
+can_pickup = True
 
 
 hotbar = [bush,None,None,None,None]
@@ -66,13 +67,16 @@ while running:
 
     for y in range(Actual_map.shape[0]): # montre la map
         for x in range(Actual_map.shape[1]):
-            List_tiles[Actual_map[x,y]].blit_self(screen,(x*64-Robot.pos[0]+W/2, y*64-Robot.pos[1]+H/2))
+            List_tiles[Actual_map[x,y]].blit_self(screen,(x*LEN_SQUARE-Robot.pos[0]+W/2, y*LEN_SQUARE-Robot.pos[1]+H/2))
 
     if keys[pygame.K_e]: #recuperer objets
         for obj in List_ground_objets:
-            if (Robot.pos[0] - obj[1][0])**2 +(Robot.pos[1] - obj[1][1])**2 <= (LEN_SQUARE*Robot.range_pickup)**2:
+            if (Robot.pos[0] - obj[1][0])**2 +(Robot.pos[1] - obj[1][1])**2 <= (LEN_SQUARE*Robot.range_pickup)**2 and can_pickup:
+                can_pickup = False
                 if Robot.pickup(obj[0]):
                     List_ground_objets.remove(obj)
+    else:
+        can_pickup = True               
 
     if keys[pygame.K_n]:
         if Robot.hotbar[Robot.held_item_indice] != None:
@@ -87,19 +91,19 @@ while running:
         screen.blit(pygame.transform.scale(obj[0].image,(32,32)),(obj[1][0]-Robot.pos[0]+W/2 - 16,obj[1][1]-Robot.pos[1]+H/2 - 16))
 
     Pos_souris_monde=(Robot.pos[0]-W/2+mouse_pos[0],Robot.pos[1]-H/2+mouse_pos[1]) # position de la souris ds le monde en pixels
-    tile_souris = ((Pos_souris_monde[0]//64)*64,(Pos_souris_monde[1]//64)*64) # on va floor (si victor a raison que cest un floor mdr) la position a la case 
+    tile_souris = ((Pos_souris_monde[0]//LEN_SQUARE)*LEN_SQUARE,(Pos_souris_monde[1]//LEN_SQUARE)*LEN_SQUARE) # on va floor (si victor a raison que cest un floor mdr) la position a la case 
     centre_tile = (tile_souris[0]+32,tile_souris[1]+32) # on prends dcp le centre de la tile, en gros c juste len_square /2 mais on va simplifier
     diff = (centre_tile[0]-Robot.pos[0],centre_tile[1]-Robot.pos[1]) # reconversion en pos ecran
-    if diff[0]**2+diff[1]**2<=(Robot.range_pickup*64+64)**2:
+    if diff[0]**2+diff[1]**2<=(Robot.range_pickup*LEN_SQUARE+LEN_SQUARE)**2:
         screen_pos=(W/2-(Robot.pos[0]-tile_souris[0]),H/2-(Robot.pos[1]-tile_souris[1]))
-        pygame.draw.rect(screen,"red",(screen_pos[0],screen_pos[1],64,64),2)
+        pygame.draw.rect(screen,"red",(screen_pos[0],screen_pos[1],LEN_SQUARE,LEN_SQUARE),2)
 
     # print(Robot.pos)
     Robot.do_all(keys,dt,screen,Actual_map)
     pygame.display.flip()
     if time.time()-time_0 > dt:
         print(" OH SHIT", time.time()-time_0- dt)
-    print(time.time()-time_0- dt)
+    # print(time.time()-time_0- dt)
     dt = clock.tick(120) / 1000
 
 pygame.quit()
