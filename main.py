@@ -23,7 +23,10 @@ dt = 0
 fade_alpha = 255 
 fade_speed = 1
 fade_active = True
-timer = 180
+timer = 70
+fade2_active = False
+earth_active = False
+timer2= 180
 
 # Variables dialogue
 
@@ -115,12 +118,7 @@ while running:
     screen.fill("purple")
 
     pygame.draw.circle(screen, "red", player_pos, 40)
-    current_frame += animation_speed
-    if current_frame >= len(frames):
-        current_frame = 0
-    screen.blit(frames[int(current_frame)], (300, 200)) 
-    earth_rect = frames[int(current_frame)].get_rect(center=(640, 360))
-    screen.blit(frames[int(current_frame)], earth_rect)
+
        
     if fade_active:
         if timer > 0 :
@@ -133,13 +131,34 @@ while running:
             if fade_alpha <= 0:
                 fade_alpha = 0
                 fade_active = False
-                print("fade finis")
+                print("fade1 finis")
+                earth_active = True
     else :
-        if dialogue_box :
-            for object in objects:
+        if earth_active :
+            current_frame += animation_speed
+            if current_frame >= len(frames):
+                current_frame = 0
+            screen.blit(frames[int(current_frame)], (300, 200)) 
+            earth_rect = frames[int(current_frame)].get_rect(center=(640, 360))
+            screen.blit(frames[int(current_frame)], earth_rect)        
+        else :
+            if fade2_active :
+                if timer2 > 0 :
+                            screen.fill ((0,0,0))
+                            timer2 -=1
+                else :
 
-                object.process()
-                object.draw(screen)
+                    fade_alpha -= fade_speed 
+                    if fade_alpha <= 0:
+                        fade_alpha = 0
+                        fade2_active = False
+                        print("fade2 finis")
+            else :
+                if dialogue_box :
+                    for object in objects:
+
+                        object.process()
+                        object.draw(screen)
 
     fade_surface = pygame.Surface((1280, 720))
     fade_surface.set_alpha(fade_alpha)
@@ -156,7 +175,7 @@ while running:
     current_char = counter // speed
     previous_char = previous_counter // speed
 
-    if current_char == 1 and previous_char == 0 and not done and not fade_active and dialogue_box:
+    if current_char == 1 and previous_char == 0 and not done and not fade_active and dialogue_box and not fade2_active:
         text_sound.play()
     
     dialogue_1.snip = message[0:counter//speed]
