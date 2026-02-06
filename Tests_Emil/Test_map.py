@@ -33,10 +33,11 @@ Actual_map = D.creation_map_rectangle(20,20,0)
 Actual_map_pollution = D.set_pollution_map_rectangle(10,10,Actual_map,5)
 Actual_map_objects_layer = D.creation_map_rectangle(20,20,-1)
 
-Nom_image_list_tiles = ["background_1.png","background_2.png","Bush_tile.png"]
+Nom_image_list_tiles = ["background_1.png","background_2.png","Bush_tile.png","transparent.png"]
 List_tiles = [CT.Tile(Nom_image_list_tiles[0],None,0),CT.Tile(Nom_image_list_tiles[0],None,90),CT.Tile(Nom_image_list_tiles[0],None,180),CT.Tile(Nom_image_list_tiles[0],None,270),\
               CT.Tile(Nom_image_list_tiles[1],None,0),CT.Tile(Nom_image_list_tiles[1],None,90),CT.Tile(Nom_image_list_tiles[1],None,180),CT.Tile(Nom_image_list_tiles[1],None,270),\
-              CT.Tile(Nom_image_list_tiles[2],None,0)]
+              CT.Tile(Nom_image_list_tiles[2],None,0),
+              CT.Tile(Nom_image_list_tiles[3],None,0)]
 
 for y in range(Actual_map.shape[0]):
     for x in range(Actual_map.shape[1]):
@@ -70,8 +71,8 @@ while running:
     for y in range(Actual_map.shape[0]): # montre la map
         for x in range(Actual_map.shape[1]):
             List_tiles[Actual_map[x,y]].blit_self(screen,(x*LEN_SQUARE-Robot.pos[0]+W/2, y*LEN_SQUARE-Robot.pos[1]+H/2))
-            if Actual_map_objects_layer[x,y] != -1:
-                List_tiles[Actual_map_objects_layer[x,y]].blit_self(screen,(x*LEN_SQUARE-Robot.pos[0]+W/2, y*LEN_SQUARE-Robot.pos[1]+H/2))
+            
+            List_tiles[Actual_map_objects_layer[x,y]].blit_self(screen,(x*LEN_SQUARE-Robot.pos[0]+W/2, y*LEN_SQUARE-Robot.pos[1]+H/2))
 
     if keys[pygame.K_e]: #recuperer objets
         for obj in List_ground_objets:
