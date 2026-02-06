@@ -14,8 +14,8 @@ def place_matrice_big_then_small_addition(matrice,house_matrice,positions):
                 matrice[positions[1]+true_y,positions[0]+true_x] += house_matrice[true_y,true_x]
     return matrice
 
-def creation_map_rectangle(width,height):
-    Map = np.zeros((width,height), dtype=np.int32)
+def creation_map_rectangle(width,height,num):
+    Map = np.full((width,height), num,dtype=np.int32)
     return Map
 
 def create_round_matrice(radius):

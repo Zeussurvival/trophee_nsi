@@ -30,6 +30,7 @@ class Tile:
 
         if list_images != None:
             self.images_to_add = list_images
+            self.indice_list_images = 0
         else:
             self.images_to_add = None
         self.poid = 0
