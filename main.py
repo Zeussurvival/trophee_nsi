@@ -11,7 +11,8 @@ police_dir = os.path.join(assets_dir,"polices")
 sounds_dir = os.path.join(assets_dir, "sounds")
 
 
-
+font_1 = os.path.join(police_dir, "test_1.ttf")
+font_2 = os.path.join(police_dir, "test_2.ttf")
 
 
 # pygame setup
@@ -87,7 +88,7 @@ dialogue_box_y = (screen.get_height() - dialogue_box_height) // 2
 
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
-font = pygame.font.Font(police_dialogue_path, 25)
+font = pygame.font.Font(font_1, 25)
 text_1 = font.render("Cela fait 732 années que les humains ont quitté cette planète", 1, (255, 255, 255))
 text_2 = font.render("Ils ont laissé derrière eux… ceci.", 1, (255, 255, 255))
 text_rect_1 = text_1.get_rect(center=(640, 360))
